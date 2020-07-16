@@ -7,7 +7,7 @@ const AuthContainer = React.lazy(() =>
 
 function Login() {
   return (
-    <React.Suspense fallback={Loading}>
+    <React.Suspense fallback={Loading()}>
       <AuthContainer page="login" btnText="Login" heading="Welcome" />
     </React.Suspense>
   );

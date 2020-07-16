@@ -7,7 +7,7 @@ const AuthContainer = React.lazy(() =>
 
 function Register() {
   return (
-    <React.Suspense fallback={Loading}>
+    <React.Suspense fallback={Loading()}>
       <AuthContainer
         page="register"
         btnText="Register"
