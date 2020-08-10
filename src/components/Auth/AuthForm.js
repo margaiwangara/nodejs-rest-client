@@ -1,20 +1,49 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useSelector, useDispatch } from 'react-redux';
+import { removeError } from '@/store/actions/error';
 import useAuthForm from '@/hooks/authForm';
+import { passwordToggleStyle } from '@/utils/styling';
 
 function AuthForm({ page, btnText, heading }) {
   const [passwordToggle, setPasswordToggle] = useState(false);
   const [confirmPasswordToggle, setConfirmPasswordToggle] = useState(false);
-  const { value, handleChange, handleSubmit: onSubmit } = useAuthForm(page);
+  const {
+    value,
+    handleChange,
+    handleSubmit: onSubmit,
+    handleForgotPassword,
+  } = useAuthForm(page);
   const { handleSubmit, register, errors } = useForm();
+  const { error } = useSelector((state) => state.error);
+  const history = useHistory();
+  const dispatch = useDispatch();
+  history.listen(() => {
+    dispatch(removeError());
+  });
 
   return (
     <div className="card" style={{ marginTop: '20vh' }}>
       <div className="card-body">
         <form onSubmit={handleSubmit(onSubmit)}>
           <h3 className="text-center pb-2 border-bottom mb-3">{heading}</h3>
+          {error ? (
+            <div className="alert alert-danger">
+              {Array.isArray(error.message) ? (
+                <ul className="list-unstyled p-0 m-0">
+                  {error.message.map((e, i) => (
+                    <li key={i}>{e}</li>
+                  ))}
+                </ul>
+              ) : (
+                error.message
+              )}
+            </div>
+          ) : (
+            ''
+          )}
           {page === 'register' ? (
             <div className="form-group">
               <input
@@ -71,6 +100,14 @@ function AuthForm({ page, btnText, heading }) {
               <span className="invalid-feedback">Password is required</span>
             )}
           </div>
+          <span
+            className="small d-flex justify-content-end"
+            style={{ marginTop: '-12px', marginBottom: '10px' }}
+          >
+            <Link to="/forgot-password" onClick={handleForgotPassword}>
+              Forgot Password?
+            </Link>
+          </span>
           {page === 'register' ? (
             <div className="form-group" style={{ position: 'relative' }}>
               <span
@@ -136,10 +173,4 @@ function AuthForm({ page, btnText, heading }) {
   );
 }
 
-const passwordToggleStyle = {
-  position: 'absolute',
-  right: 0,
-  padding: '0.375rem 0.75rem',
-  cursor: 'pointer',
-};
 export default AuthForm;

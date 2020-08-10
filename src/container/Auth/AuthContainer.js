@@ -1,5 +1,6 @@
 import React from 'react';
 import Loading from '@/utils/Loading';
+import { wrapperStyling } from '@/utils/styling';
 
 const AuthForm = React.lazy(() => import('@/components/Auth/AuthForm'));
 
@@ -17,9 +18,4 @@ function AuthContainer(props) {
   );
 }
 
-const wrapperStyling = {
-  height: '100vh',
-  width: '100%',
-  boxSizing: 'border-box',
-};
 export default AuthContainer;
