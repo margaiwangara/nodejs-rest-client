@@ -4,6 +4,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 // css
+import 'simplebar/dist/simplebar.min.css';
 import './assets/css/index.css';
 
 ReactDOM.render(
