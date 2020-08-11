@@ -9,12 +9,22 @@ import {
   faEye,
   faEyeSlash,
   faChevronLeft,
+  faUserEdit,
+  faKey,
 } from '@fortawesome/free-solid-svg-icons';
 import Loading from '@/utils/Loading';
 import SimpleBar from 'simplebar-react';
 
 // font-awesome library
-library.add(fab, faSpinner, faEyeSlash, faEye, faChevronLeft);
+library.add(
+  fab,
+  faSpinner,
+  faEyeSlash,
+  faEye,
+  faChevronLeft,
+  faUserEdit,
+  faKey,
+);
 
 const store = configureStore();
 
