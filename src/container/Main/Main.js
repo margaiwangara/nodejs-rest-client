@@ -10,6 +10,7 @@ import {
 
 const Login = React.lazy(() => import('@/views/Auth/Login'));
 const Register = React.lazy(() => import('@/views/Auth/Register'));
+const TwoFactor = React.lazy(() => import('@/views/Auth/TwoFactor'));
 const ResetPassword = React.lazy(() =>
   import('@/views/ForgotPassword/ResetPassword'),
 );
@@ -74,6 +75,12 @@ function Main() {
         path="/reset-password"
         name="Reset Password"
         component={ResetPassword}
+      />
+      <PublicRoute
+        exact
+        path="/two-factor"
+        name="Two Factor"
+        component={TwoFactor}
       />
       <PrivateRoute path="/" component={DefaultLayout} />
     </Switch>
