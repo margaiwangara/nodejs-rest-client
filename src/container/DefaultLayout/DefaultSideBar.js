@@ -1,10 +1,22 @@
 import React from 'react';
 import me from '@/assets/images/me2.jpg';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { profileOverlay } from '@/utils/styling';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { logoutUser } from '@/store/actions/auth';
 
 function DefaultSideBar() {
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user);
+
+  const signOut = (e) => {
+    // e.preventDefault();
+    console.log('Signed Out');
+    logoutUser(dispatch).then(() => history.push('/login'));
+  };
+
   return (
     <div className="card w-100">
       <div className="card-body text-center">
@@ -28,8 +40,10 @@ function DefaultSideBar() {
             />
           </figure>
         </div>
-        <h3 className="text-center mt-3">Margai Wangara</h3>
-        <p>margaiwangara@gmail.com</p>
+        <h3 className="text-center mt-3">
+          {user.name} {user.surname}
+        </h3>
+        <p>{user.email}</p>
         <hr />
         <div className="list-group">
           <NavLink
@@ -56,7 +70,9 @@ function DefaultSideBar() {
           </NavLink>
         </div>
         <hr />
-        <button className="btn btn-danger btn-block">Logout</button>
+        <button className="btn btn-danger btn-block" onClick={signOut}>
+          Logout
+        </button>
       </div>
     </div>
   );

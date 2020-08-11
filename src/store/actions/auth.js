@@ -50,8 +50,10 @@ function authUser(dispatch, page, formValue, history) {
           // check if email if confirmed
 
           setAuthorizationToken(token);
-          getUserDetails().then(({ isEmailConfirmed }) => {
+          getUserDetails().then((userResponse) => {
+            const { isEmailConfirmed, twoFactorEnable } = userResponse;
             console.log('isEmailConfirmed', isEmailConfirmed);
+            console.log('twoFactorEnable', twoFactorEnable);
             if (!isEmailConfirmed) {
               const emailConfirmError = {
                 message:
@@ -62,19 +64,29 @@ function authUser(dispatch, page, formValue, history) {
               return;
             }
 
-            send2faCode()
-              .then(({ code, expiration }) => {
-                console.log('2faCodeSent. Yayyyy!');
-                dispatch(set2faCode(code, expiration));
+            // if 2fa is enabled send 2fa code else set token and redirect to home
+            if (twoFactorEnable) {
+              send2faCode()
+                .then(({ code, expiration }) => {
+                  console.log('2faCodeSent. Yayyyy!');
+                  dispatch(set2faCode(code, expiration));
 
-                // set jwt token in localStorage
-                window.localStorage.setItem('jwt', token);
-                history.push('/two-factor');
-              })
-              .catch((error) => {
-                console.log('2faCodeError. Nayyyy!', error);
-                history.push('/login');
-              });
+                  // set jwt token in localStorage
+                  window.localStorage.setItem('jwt', token);
+                  history.push('/two-factor');
+                })
+                .catch((error) => {
+                  console.log('2faCodeError. Nayyyy!', error);
+                  history.push('/login');
+                });
+            } else {
+              // set jwt
+              window.localStorage.setItem('jwt', token);
+              // dispatch user details
+              const { ...userDetails } = userResponse;
+              dispatch(setCurrentUser(userDetails));
+              history.push('/');
+            }
           });
         } else if (page === 'register') {
           history.push('/login');
