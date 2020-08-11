@@ -11,6 +11,7 @@ import {
   faChevronLeft,
   faUserEdit,
   faKey,
+  faPencilAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import Loading from '@/utils/Loading';
 import SimpleBar from 'simplebar-react';
@@ -24,6 +25,7 @@ library.add(
   faChevronLeft,
   faUserEdit,
   faKey,
+  faPencilAlt,
 );
 
 const store = configureStore();

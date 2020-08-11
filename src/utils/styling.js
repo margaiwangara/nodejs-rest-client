@@ -10,3 +10,15 @@ export const passwordToggleStyle = {
   padding: '0.375rem 0.75rem',
   cursor: 'pointer',
 };
+
+export const profileOverlay = {
+  position: 'absolute',
+  height: '50px',
+  width: '50px',
+  right: 0,
+  bottom: 0,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  cursor: 'pointer',
+};
