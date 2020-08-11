@@ -32,6 +32,7 @@ function Main() {
           ({
             email,
             name,
+            surname,
             createdAt,
             profileImage,
             twoFactorCode,
@@ -42,6 +43,7 @@ function Main() {
             const userDetails = {
               email,
               name,
+              surname,
               createdAt,
               profileImage,
               twoFactorCode,
