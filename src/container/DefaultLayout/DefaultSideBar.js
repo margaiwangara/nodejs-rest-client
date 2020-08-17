@@ -1,5 +1,4 @@
 import React from 'react';
-import me from '@/assets/images/me2.jpg';
 import { NavLink, useHistory, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { profileOverlay } from '@/utils/styling';

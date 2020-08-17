@@ -15,8 +15,12 @@ jobs:
         run: |
           npm install
           npm run build --if-present
+        env:
+          CI: false
+
       - name: List output files
         run: ls
+
   deploy:
     needs:
       - build
