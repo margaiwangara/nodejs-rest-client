@@ -5,6 +5,9 @@ const EditProfile = React.lazy(() => import('@/views/Profile/EditProfile'));
 const ChangePassword = React.lazy(() =>
   import('@/views/Profile/ChangePassword'),
 );
+const EditProfilePicture = React.lazy(() =>
+  import('@/views/Profile/EditProfilePicture'),
+);
 
 const routes = [
   {
@@ -24,6 +27,12 @@ const routes = [
     path: '/change-password',
     name: 'Change Password',
     component: ChangePassword,
+  },
+  {
+    exact: true,
+    path: '/edit-profile-picture',
+    name: 'Edit Profile Picture',
+    component: EditProfilePicture,
   },
 ];
 

@@ -8,7 +8,7 @@ const Loading = () => (
 );
 
 const loadingStyle = {
-  height: '100vh',
+  height: '100%',
   width: '100%',
   position: 'fixed',
   overflow: 'hidden',

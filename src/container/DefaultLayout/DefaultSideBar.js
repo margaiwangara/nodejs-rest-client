@@ -1,10 +1,11 @@
 import React from 'react';
 import me from '@/assets/images/me2.jpg';
-import { NavLink, useHistory } from 'react-router-dom';
+import { NavLink, useHistory, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { profileOverlay } from '@/utils/styling';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { logoutUser } from '@/store/actions/auth';
+import { BASE_URL } from '@/utils/env';
 
 function DefaultSideBar() {
   const history = useHistory();
@@ -17,6 +18,11 @@ function DefaultSideBar() {
     logoutUser(dispatch).then(() => history.push('/login'));
   };
 
+  const profileImage =
+    user.profileImage === 'no-image.jpg'
+      ? `https://i.pravatar.cc/150?u=${user.email}`
+      : `${BASE_URL}/uploads/${user.profileImage}`;
+
   return (
     <div className="card w-100">
       <div className="card-body text-center">
@@ -25,15 +31,19 @@ function DefaultSideBar() {
             className="m-0"
             style={{ height: '150px', width: '150px', position: 'relative' }}
           >
-            <span style={profileOverlay} className="rounded-circle bg-primary">
+            <Link
+              to="/edit-profile-picture"
+              style={profileOverlay}
+              className="rounded-circle bg-primary"
+            >
               <FontAwesomeIcon
                 icon="pencil-alt"
                 color="#ffffff"
                 style={{ fontSize: '20px' }}
               />
-            </span>
+            </Link>
             <img
-              src={me}
+              src={profileImage}
               alt="portrait"
               className="w-100 h-100 rounded-circle"
               style={{ objectFit: 'cover' }}
