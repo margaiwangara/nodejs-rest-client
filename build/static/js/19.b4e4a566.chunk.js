@@ -1,0 +1,2 @@
+(this.webpackJsonpnodejsrestclient=this.webpackJsonpnodejsrestclient||[]).push([[19],{226:function(e,a,t){"use strict";t.r(a);var n=t(0),s=t.n(n);a.default=function(){return s.a.createElement("div",{className:"card"},s.a.createElement("div",{className:"card-body"},s.a.createElement("h3",null,"Dashboard")))}}}]);
+//# sourceMappingURL=19.b4e4a566.chunk.js.map

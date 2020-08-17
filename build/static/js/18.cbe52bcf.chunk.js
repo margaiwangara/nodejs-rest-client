@@ -1,0 +1,2 @@
+(this.webpackJsonpnodejsrestclient=this.webpackJsonpnodejsrestclient||[]).push([[18],{201:function(e,t,n){"use strict";n.r(t);var a=n(0),r=n.n(a),s=n(59),c=r.a.lazy((function(){return n.e(0).then(n.bind(null,182))}));t.default=function(){return r.a.createElement(r.a.Suspense,{fallback:Object(s.a)()},r.a.createElement(c,{page:"register",btnText:"Register",heading:"Create Account"}))}}}]);
+//# sourceMappingURL=18.cbe52bcf.chunk.js.map
