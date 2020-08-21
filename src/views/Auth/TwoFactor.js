@@ -14,6 +14,7 @@ import { addError } from '@/store/actions/error';
 import CountDown from 'react-countdown';
 import { wrapperStyling } from '@/utils/styling';
 import Loading from '@/utils/Loading';
+import TitleComponent from '@/container/DefaultLayout/TitleComponent';
 
 const INITIAL_STATE = {
   code: '',
@@ -121,6 +122,7 @@ function TwoFactor() {
 
   return (
     <div className="container">
+      <TitleComponent title="Two Factor" />
       <div className="row" style={wrapperStyling}>
         <div className="col-md-6 offset-md-3">
           <React.Suspense fallback={Loading()}>

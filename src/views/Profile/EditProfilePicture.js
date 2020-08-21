@@ -4,6 +4,7 @@ import apiRequest from '@/services/api';
 import { addError } from '@/store/actions/error';
 import ErrorDisplay from '@/components/Error/ErrorDisplay';
 import { getUserDetails, setCurrentUser } from '@/store/actions/auth';
+import TitleComponent from '@/container/DefaultLayout/TitleComponent';
 
 function EditProfilePicture() {
   const [profile, setProfile] = useState(null);
@@ -46,6 +47,7 @@ function EditProfilePicture() {
   };
   return (
     <div className="card">
+      <TitleComponent title="Edit Profile Picture" />
       <div className="card-body">
         <form onSubmit={handleSubmit}>
           <h4 className="pb-2 mb-3 border-bottom">Edit Profile Picture</h4>

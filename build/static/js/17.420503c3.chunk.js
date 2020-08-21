@@ -1,2 +1,0 @@
-(this.webpackJsonpnodejsrestclient=this.webpackJsonpnodejsrestclient||[]).push([[17],{200:function(e,n,t){"use strict";t.r(n);var a=t(0),c=t.n(a),s=t(59),i=c.a.lazy((function(){return t.e(0).then(t.bind(null,182))}));n.default=function(){return c.a.createElement(c.a.Suspense,{fallback:Object(s.a)()},c.a.createElement(i,{page:"login",btnText:"Login",heading:"Welcome"}))}}}]);
-//# sourceMappingURL=17.420503c3.chunk.js.map

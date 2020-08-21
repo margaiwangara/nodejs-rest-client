@@ -7,6 +7,7 @@ import { addError, removeError } from '@/store/actions/error';
 import { resetPassword } from '@/store/actions/auth';
 import Loading from '@/utils/Loading';
 import { wrapperStyling, passwordToggleStyle } from '@/utils/styling';
+import TitleComponent from '@/container/DefaultLayout/TitleComponent';
 
 const INITIAL_STATE = {
   password: '',
@@ -52,6 +53,7 @@ function ResetPassword() {
 
   return (
     <div className="container">
+      <TitleComponent title="Reset Password" />
       <div style={wrapperStyling} className="row">
         <div className="col-md-6 offset-md-3">
           <React.Suspense fallback={Loading()}>

@@ -4,6 +4,7 @@ import apiRequest from '@/services/api';
 import { setCurrentUser } from '@/store/actions/auth';
 import { addError, removeError } from '@/store/actions/error';
 import ErrorDisplay from '@/components/Error/ErrorDisplay';
+import TitleComponent from '@/container/DefaultLayout/TitleComponent';
 
 function EditProfile() {
   const { user } = useSelector((state) => state.user);
@@ -42,6 +43,7 @@ function EditProfile() {
 
   return (
     <div className="card">
+      <TitleComponent title="Edit Profile" />
       <div className="card-body">
         <form onSubmit={handleSubmit}>
           <ErrorDisplay error={error} />

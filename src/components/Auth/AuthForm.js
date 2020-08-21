@@ -100,14 +100,16 @@ function AuthForm({ page, btnText, heading }) {
               <span className="invalid-feedback">Password is required</span>
             )}
           </div>
-          <span
-            className="small d-flex justify-content-end"
-            style={{ marginTop: '-12px', marginBottom: '10px' }}
-          >
-            <Link to="/forgot-password" onClick={handleForgotPassword}>
-              Forgot Password?
-            </Link>
-          </span>
+          {page === 'login' && (
+            <span
+              className="small d-flex justify-content-end"
+              style={{ marginTop: '-12px', marginBottom: '10px' }}
+            >
+              <Link to="/forgot-password" onClick={handleForgotPassword}>
+                Forgot Password?
+              </Link>
+            </span>
+          )}
           {page === 'register' ? (
             <div className="form-group" style={{ position: 'relative' }}>
               <span

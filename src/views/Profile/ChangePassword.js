@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import apiRequest from '@/services/api';
 import { addError, removeError } from '@/store/actions/error';
 import ErrorDisplay from '@/components/Error/ErrorDisplay';
+import TitleComponent from '@/container/DefaultLayout/TitleComponent';
 
 const INITIAL_STATE = {
   current_password: '',
@@ -38,6 +39,7 @@ function ChangePassword() {
   };
   return (
     <div className="card">
+      <TitleComponent title="Change Password" />
       <div className="card-body">
         <form onSubmit={handleSubmit}>
           <h4 className="pb-2 mb-3 border-bottom">Change Password</h4>
