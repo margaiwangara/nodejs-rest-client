@@ -1,42 +1,20 @@
-name: Node.js Client With React.js
+name: Drift Application With React.js
 'on':
   push:
     branches: master
 jobs:
-  build-app:
+  build-and-deploy:
+    name: build-and-deploy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
       - name: Build React Project
         uses: actions/setup-node@v1
         with:
           node-version: 12.x
-
-      # - name: Get yarn cache directory path
-      #   id: yarn-cache-dir-path
-      #   run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      # - name: Cache yarn cache
-      #   uses: actions/cache@v2
-      #   id: cache-yarn-cache
-      #   with:
-      #     path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-      #     key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-yarn-
-
-      # - name: Cache node_modules
-      #   id: cache-node-modules
-      #   uses: actions/cache@v2
-      #    with:
-      #   path: node_modules
-      #   key: ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-${{ hashFiles('**/yarn.lock') }}
-      #   restore-keys: |
-      #     ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-
-      # - run: yarn
-      #   if: |
-      #    steps.cache-yarn-cache.outputs.cache-hit != 'true' ||
-      #    steps.cache-node-modules.outputs.cache-hit != 'true'
 
       - name: Cache/Restore node_modules
         uses: actions/cache@v2
@@ -56,16 +34,8 @@ jobs:
       - name: List output files
         run: find build/ -print
 
-  deploy:
-    needs:
-      - build-app
-    name: Deploy to ftp server
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-      - uses: SamKirkland/FTP-Deploy-Action@3.1.1
+      - name: Deploy to ftp server
+        uses: SamKirkland/FTP-Deploy-Action@3.1.1
         with:
           ftp-server: '${{ secrets.FTP_SERVER }}/drift/'
           ftp-username: '${{ secrets.FTP_USERNAME }}'
