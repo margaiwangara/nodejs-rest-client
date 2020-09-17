@@ -1,5 +1,5 @@
 @import 'bootstrap.min.css';
-@import url('https://unpkg.com/shards-ui@latest/dist/css/shards.min.css');
+@import 'shards.min.css';
 
 .files input {
   outline: 2px dashed #92b0b3;
