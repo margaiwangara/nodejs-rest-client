@@ -6,7 +6,7 @@ export const setTokenHeader = (token) => {
   else delete axios.defaults.headers.common['Authorization'];
 };
 
-const baseUrl = process.env.NODE_ENV !== 'development' ? `${BASE_URL}/` : '';
+const baseUrl = process.env.NODE_ENV !== 'development' ? `${BASE_URL}` : '';
 
 function apiRequest(method, path, payload) {
   return new Promise((resolve, reject) => {

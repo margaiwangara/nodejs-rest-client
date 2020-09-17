@@ -6,6 +6,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { removeError } from '@/store/actions/error';
 import useAuthForm from '@/hooks/authForm';
 import { passwordToggleStyle } from '@/utils/styling';
+import { GoogleLogin } from 'react-google-login';
+import googleIcon from '@/assets/images/google.svg';
 
 function AuthForm({ page, btnText, heading }) {
   const [passwordToggle, setPasswordToggle] = useState(false);
@@ -15,11 +17,14 @@ function AuthForm({ page, btnText, heading }) {
     handleChange,
     handleSubmit: onSubmit,
     handleForgotPassword,
+    googleLoginSuccess,
+    googleLoginFailure,
   } = useAuthForm(page);
   const { handleSubmit, register, errors } = useForm();
   const { error } = useSelector((state) => state.error);
   const history = useHistory();
   const dispatch = useDispatch();
+
   history.listen(() => {
     dispatch(removeError());
   });
@@ -147,6 +152,43 @@ function AuthForm({ page, btnText, heading }) {
           <button className="btn btn-primary btn-block mb-3" type="submit">
             {btnText}
           </button>
+
+          <div className="d-flex align-items-center mt-4">
+            <span
+              className="d-block border border-secondary"
+              style={{ borderWidth: '5px', flex: 2 }}
+            ></span>
+            <span className="px-2 text-muted text-uppercase">OR</span>
+            <span
+              className="d-block border border-secondary"
+              style={{ borderWidth: '5px', flex: 2 }}
+            ></span>
+          </div>
+
+          <GoogleLogin
+            clientId="1013336741988-eklgqt5d538pe7ahloh2sng8fhp8f4vh.apps.googleusercontent.com"
+            render={(props) => (
+              <button
+                type="button"
+                onClick={props.onClick}
+                disabled={props.disabled}
+                className="d-flex align-items-center justify-content-center btn btn-block my-3 py-2 font-weight-bold text-muted"
+                style={{ backgroundColor: '#ffffff' }}
+              >
+                <img
+                  src={googleIcon}
+                  alt="google-icon"
+                  height="18"
+                  width="18"
+                  className="mr-2"
+                />
+                {page === 'login' ? 'Login With Google' : 'Sign Up With Google'}
+              </button>
+            )}
+            onSuccess={googleLoginSuccess}
+            onFailure={googleLoginFailure}
+            cookiePolicy={'single_host_origin'}
+          />
 
           <div className="text-center p-t-115">
             <span className="txt1">

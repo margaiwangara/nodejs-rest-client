@@ -3,20 +3,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const Loading = () => (
   <div style={loadingStyle}>
-    <FontAwesomeIcon icon="spinner" spin size="5x" />
+    <FontAwesomeIcon icon="spinner" spin size="2x" />
   </div>
 );
 
 const loadingStyle = {
-  height: '100%',
   width: '100%',
-  position: 'fixed',
   overflow: 'hidden',
-  backgroundColor: 'rgba(255, 255, 255, 0.25)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   zIndex: 50,
+  padding: '20px 0',
 };
 
 export default Loading;
