@@ -15,6 +15,7 @@ import CountDown from 'react-countdown';
 import { wrapperStyling } from '@/utils/styling';
 import Loading from '@/utils/Loading';
 import TitleComponent from '@/container/DefaultLayout/TitleComponent';
+import { userData } from '@/utils/user';
 
 const INITIAL_STATE = {
   code: '',
@@ -38,31 +39,11 @@ function TwoFactor() {
       const token = window.localStorage.getItem('jwt');
       if (token) {
         getUserDetails()
-          .then(
-            ({
-              email,
-              name,
-              createdAt,
-              profileImage,
-              twoFactorCode,
-              twoFactorCodeExpire,
-              recoveryEmail,
-              twoFactorEnable,
-            }) => {
-              const userDetails = {
-                email,
-                name,
-                createdAt,
-                profileImage,
-                twoFactorCode,
-                twoFactorCodeExpire,
-                recoveryEmail,
-                twoFactorEnable,
-              };
-              dispatch(setCurrentUser(userDetails));
-              history.push('/');
-            },
-          )
+          .then((data) => {
+            const userDetails = userData(data);
+            dispatch(setCurrentUser(userDetails));
+            history.push('/');
+          })
           .catch(() => dispatch(removeCurrentUser()));
       }
       history.push('/login');

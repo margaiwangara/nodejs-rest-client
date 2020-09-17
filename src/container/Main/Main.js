@@ -7,6 +7,7 @@ import {
   getUserDetails,
   setCurrentUser,
 } from '@/store/actions/auth';
+import { userData } from '@/utils/user';
 
 const Login = React.lazy(() => import('@/views/Auth/Login'));
 const Register = React.lazy(() => import('@/views/Auth/Register'));
@@ -29,38 +30,17 @@ function Main() {
     if (authToken) {
       setAuthorizationToken(authToken);
       getUserDetails()
-        .then(
-          ({
-            email,
-            name,
-            surname,
-            createdAt,
-            profileImage,
-            twoFactorCode,
-            twoFactorCodeExpire,
-            recoveryEmail,
-            twoFactorEnable,
-          }) => {
-            const userDetails = {
-              email,
-              name,
-              surname,
-              createdAt,
-              profileImage,
-              twoFactorCode,
-              twoFactorCodeExpire,
-              recoveryEmail,
-              twoFactorEnable,
-            };
-            dispatch(setCurrentUser(userDetails));
-          },
-        )
+        .then((data) => {
+          const userDetails = userData(data);
+          dispatch(setCurrentUser(userDetails));
+        })
         .catch(() => dispatch(removeCurrentUser()));
     } else {
       dispatch(removeCurrentUser());
       history.push('/login');
     }
   }, []);
+
   return (
     <Switch>
       <PublicRoute
