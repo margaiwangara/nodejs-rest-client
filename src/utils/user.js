@@ -10,6 +10,7 @@ export const userData = (data) => {
     recoveryEmail,
     twoFactorEnable,
     strategy,
+    id,
   } = data;
 
   return {
@@ -23,5 +24,6 @@ export const userData = (data) => {
     recoveryEmail,
     twoFactorEnable,
     strategy,
+    id,
   };
 };

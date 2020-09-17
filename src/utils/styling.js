@@ -22,3 +22,7 @@ export const profileOverlay = {
   alignItems: 'center',
   cursor: 'pointer',
 };
+
+export const chatItemStyling = {
+  lineHeight: 1.5,
+};

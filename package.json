@@ -27,7 +27,8 @@
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
-    "simplebar-react": "^2.2.1"
+    "simplebar-react": "^2.2.1",
+    "socket.io-client": "^2.3.0"
   },
   "scripts": {
     "start": "craco start",
@@ -35,7 +36,6 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": "http://localhost:5000",
   "eslintConfig": {
     "extends": "react-app",
     "settings": {

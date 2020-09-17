@@ -32,7 +32,7 @@ function DefaultSideBar() {
     );
 
   return (
-    <div className="card w-100">
+    <div className="card w-100 mb-3">
       <div className="card-body text-center">
         <div className="image-area d-flex justify-content-center">
           <figure

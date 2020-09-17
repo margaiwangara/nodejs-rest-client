@@ -1,6 +1,6 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { HashRouter } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { configureStore } from './store';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fab } from '@fortawesome/free-brands-svg-icons';
@@ -12,6 +12,7 @@ import {
   faUserEdit,
   faKey,
   faPencilAlt,
+  faArrowAltCircleRight,
 } from '@fortawesome/free-solid-svg-icons';
 import Loading from '@/utils/Loading';
 import SimpleBar from 'simplebar-react';
@@ -26,6 +27,7 @@ library.add(
   faUserEdit,
   faKey,
   faPencilAlt,
+  faArrowAltCircleRight,
 );
 
 const store = configureStore();
@@ -34,7 +36,7 @@ const Main = React.lazy(() => import('@/container/Main/Main'));
 
 function App() {
   return (
-    <HashRouter>
+    <Router>
       <div id="app" style={appStyling}>
         <React.Suspense fallback={Loading()}>
           <Provider store={store}>
@@ -47,7 +49,7 @@ function App() {
           </Provider>
         </React.Suspense>
       </div>
-    </HashRouter>
+    </Router>
   );
 }
 
