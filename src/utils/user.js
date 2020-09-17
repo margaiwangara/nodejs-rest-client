@@ -9,6 +9,7 @@ export const userData = (data) => {
     twoFactorCodeExpire,
     recoveryEmail,
     twoFactorEnable,
+    strategy,
   } = data;
 
   return {
@@ -21,5 +22,6 @@ export const userData = (data) => {
     twoFactorCodeExpire,
     recoveryEmail,
     twoFactorEnable,
+    strategy,
   };
 };

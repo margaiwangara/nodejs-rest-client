@@ -5,6 +5,7 @@ import { profileOverlay } from '@/utils/styling';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { logoutUser } from '@/store/actions/auth';
 import { BASE_URL } from '@/utils/env';
+import Identicon from 'react-identicons';
 
 function DefaultSideBar() {
   const history = useHistory();
@@ -18,9 +19,17 @@ function DefaultSideBar() {
   };
 
   const profileImage =
-    user.profileImage === 'no-image.jpg'
-      ? `https://i.pravatar.cc/150?u=${user.email}`
-      : `${BASE_URL}/uploads/${user.profileImage}`;
+    user.profileImage === 'no-image.jpg' ||
+    user.profileImage.toLowerCase().startsWith('http') ? (
+      <Identicon string={user.email} size={125} />
+    ) : (
+      <img
+        src={`${BASE_URL}/uploads/${user.profileImage}`}
+        alt="potrait"
+        className="w-100 h-100 rounded-circle"
+        style={{ objectFit: 'cover' }}
+      />
+    );
 
   return (
     <div className="card w-100">
@@ -41,12 +50,7 @@ function DefaultSideBar() {
                 style={{ fontSize: '20px' }}
               />
             </Link>
-            <img
-              src={profileImage}
-              alt="portrait"
-              className="w-100 h-100 rounded-circle"
-              style={{ objectFit: 'cover' }}
-            />
+            {profileImage}
           </figure>
         </div>
         <h3 className="text-center mt-3">
