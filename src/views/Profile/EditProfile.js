@@ -5,10 +5,14 @@ import { setCurrentUser } from '@/store/actions/auth';
 import { addError, removeError } from '@/store/actions/error';
 import ErrorDisplay from '@/components/Error/ErrorDisplay';
 import TitleComponent from '@/container/DefaultLayout/TitleComponent';
+import { useToasts } from 'react-toast-notifications';
+import FullLoading from '@/components/Loading/Loading';
 
 function EditProfile() {
   const { user } = useSelector((state) => state.user);
   const { error } = useSelector((state) => state.error);
+  const [loading, setLoading] = useState(false);
+  const { addToast } = useToasts();
   const dispatch = useDispatch();
 
   const INITIAL_STATE = {
@@ -26,6 +30,7 @@ function EditProfile() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    setLoading(true);
     apiRequest('put', '/api/auth/account/edit', value)
       .then(({ updatedUser }) => {
         const { name, surname, email, twoFactorEnable } = updatedUser;
@@ -33,16 +38,23 @@ function EditProfile() {
           setCurrentUser({ ...user, name, surname, email, twoFactorEnable }),
         );
         dispatch(removeError());
+        setLoading(false);
         console.log('Data updated');
-        alert('Profile data updated successfully');
+        const content = 'Profile data updated successfully';
+        addToast(content, {
+          appearance: 'success',
+          autoDismiss: true,
+        });
       })
       .catch((error) => {
+        setLoading(false);
         dispatch(addError(error));
       });
   };
 
   return (
-    <div className="card">
+    <div className="card" style={{ position: 'relative' }}>
+      {loading && <FullLoading />}
       <TitleComponent title="Edit Profile" />
       <div className="card-body">
         <form onSubmit={handleSubmit}>

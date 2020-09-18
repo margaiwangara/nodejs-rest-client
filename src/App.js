@@ -16,6 +16,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import Loading from '@/utils/Loading';
 import SimpleBar from 'simplebar-react';
+import { ToastProvider } from 'react-toast-notifications';
 
 // font-awesome library
 library.add(
@@ -40,12 +41,14 @@ function App() {
       <div id="app" style={appStyling}>
         <React.Suspense fallback={Loading()}>
           <Provider store={store}>
-            <SimpleBar
-              autoHide={false}
-              style={{ maxHeight: '100vh', width: '100%' }}
-            >
-              <Main />
-            </SimpleBar>
+            <ToastProvider>
+              <SimpleBar
+                autoHide={false}
+                style={{ maxHeight: '100vh', width: '100%' }}
+              >
+                <Main />
+              </SimpleBar>
+            </ToastProvider>
           </Provider>
         </React.Suspense>
       </div>

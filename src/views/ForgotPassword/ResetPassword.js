@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { addError, removeError } from '@/store/actions/error';
 import { resetPassword } from '@/store/actions/auth';
 import Loading from '@/utils/Loading';
+import FullLoading from '@/components/Loading/Loading';
 import { wrapperStyling, passwordToggleStyle } from '@/utils/styling';
 import TitleComponent from '@/container/DefaultLayout/TitleComponent';
 
@@ -18,6 +19,7 @@ function ResetPassword() {
   const [passwordToggle, setPasswordToggle] = useState(false);
   const [confirmPasswordToggle, setConfirmPasswordToggle] = useState(false);
   const [value, setValue] = useState(INITIAL_STATE);
+  const [loading, setLoading] = useState(false);
   const location = useLocation();
   const history = useHistory();
   const parsed = qs.parse(location.search);
@@ -31,12 +33,15 @@ function ResetPassword() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    setLoading(true);
+
     // check if password and confirm password match
     if (value.password !== value.confirm_password) {
       const confirmError = {
         message: 'Password and Confirm Password must match',
       };
       dispatch(addError(confirmError));
+      setLoading(false);
       return;
     }
 
@@ -44,9 +49,11 @@ function ResetPassword() {
     resetPassword(token, value)
       .then(() => {
         dispatch(removeError());
+        setLoading(false);
         history.push('/login');
       })
       .catch((error) => {
+        setLoading(false);
         dispatch(addError(error));
       });
   };
@@ -57,7 +64,11 @@ function ResetPassword() {
       <div style={wrapperStyling} className="row">
         <div className="col-md-6 offset-md-3">
           <React.Suspense fallback={Loading()}>
-            <div className="card" style={{ marginTop: '20vh' }}>
+            <div
+              className="card"
+              style={{ marginTop: '20vh', position: 'relative' }}
+            >
+              {loading && <FullLoading />}
               <div className="card-body">
                 {!token ? (
                   <div className="d-flex flex-column p-3 align-items-center">

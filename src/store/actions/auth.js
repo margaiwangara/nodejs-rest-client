@@ -41,7 +41,7 @@ function logoutUser(dispatch) {
   });
 }
 
-function authUser(dispatch, page, formValue, history) {
+function authUser(dispatch, page, formValue, history, setLoading) {
   return new Promise((resolve, reject) => {
     return apiRequest('post', `/api/auth/${page}`, formValue)
       .then(({ token }) => {
@@ -66,17 +66,20 @@ function authUser(dispatch, page, formValue, history) {
 
             // if 2fa is enabled send 2fa code else set token and redirect to home
             if (twoFactorEnable) {
+              setLoading(true);
               send2faCode()
                 .then(({ code, expiration }) => {
                   console.log('2faCodeSent. Yayyyy!');
-                  dispatch(set2faCode(code, expiration));
 
+                  dispatch(set2faCode(code, expiration));
+                  setLoading(false);
                   // set jwt token in localStorage
                   window.localStorage.setItem('jwt', token);
                   history.push('/two-factor');
                 })
                 .catch((error) => {
                   console.log('2faCodeError. Nayyyy!', error);
+                  setLoading(false);
                   history.push('/login');
                 });
             } else {

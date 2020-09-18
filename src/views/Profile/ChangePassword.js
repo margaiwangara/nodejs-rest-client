@@ -4,6 +4,8 @@ import apiRequest from '@/services/api';
 import { addError, removeError } from '@/store/actions/error';
 import ErrorDisplay from '@/components/Error/ErrorDisplay';
 import TitleComponent from '@/container/DefaultLayout/TitleComponent';
+import { useToasts } from 'react-toast-notifications';
+import FullLoading from '@/components/Loading/Loading';
 
 const INITIAL_STATE = {
   current_password: '',
@@ -14,6 +16,8 @@ const INITIAL_STATE = {
 function ChangePassword() {
   const [value, setValue] = useState(INITIAL_STATE);
   const { error } = useSelector((state) => state.error);
+  const [loading, setLoading] = useState(false);
+  const { addToast } = useToasts();
   const dispatch = useDispatch();
 
   const handleChange = (e) =>
@@ -22,6 +26,7 @@ function ChangePassword() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    setLoading(true);
     apiRequest('put', '/api/auth/account/edit/password', {
       ...value,
       oldPassword: value.current_password,
@@ -29,16 +34,24 @@ function ChangePassword() {
     })
       .then((res) => {
         console.log('changed password');
-        alert('Password changed successfully');
+        setLoading(false);
+        const content = 'Password changed successfully';
+        addToast(content, {
+          appearance: 'success',
+          autoDismiss: true,
+        });
         dispatch(removeError());
         setValue(INITIAL_STATE);
       })
       .catch((error) => {
+        setLoading(false);
+        setValue(INITIAL_STATE);
         dispatch(addError(error));
       });
   };
   return (
-    <div className="card">
+    <div className="card" style={{ position: 'relative' }}>
+      {loading && <FullLoading />}
       <TitleComponent title="Change Password" />
       <div className="card-body">
         <form onSubmit={handleSubmit}>

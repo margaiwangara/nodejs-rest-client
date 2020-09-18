@@ -5,10 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeError } from '@/store/actions/error';
 import useAuthForm from '@/hooks/authForm';
-import { passwordToggleStyle } from '@/utils/styling';
+import { passwordToggleStyle, loadingOverlay } from '@/utils/styling';
 import { GoogleLogin } from 'react-google-login';
 import googleIcon from '@/assets/images/google.svg';
 import { GOOGLE_CLIENT_ID } from '@/utils/env';
+import FullLoading from '@/components/Loading/Loading';
 
 function AuthForm({ page, btnText, heading }) {
   const [passwordToggle, setPasswordToggle] = useState(false);
@@ -20,6 +21,7 @@ function AuthForm({ page, btnText, heading }) {
     handleForgotPassword,
     googleLoginSuccess,
     googleLoginFailure,
+    loading,
   } = useAuthForm(page);
   const { handleSubmit, register, errors } = useForm();
   const { error } = useSelector((state) => state.error);
@@ -31,7 +33,8 @@ function AuthForm({ page, btnText, heading }) {
   });
 
   return (
-    <div className="card" style={{ marginTop: '20vh' }}>
+    <div className="card" style={{ marginTop: '20vh', position: 'relative' }}>
+      {loading && <FullLoading />}
       <div className="card-body">
         <form onSubmit={handleSubmit(onSubmit)}>
           <h3 className="text-center pb-2 border-bottom mb-3">{heading}</h3>

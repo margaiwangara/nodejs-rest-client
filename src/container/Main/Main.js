@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useHistory, Switch } from 'react-router-dom';
+import { useHistory, Switch, Route } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import {
   setAuthorizationToken,
@@ -8,6 +8,7 @@ import {
   setCurrentUser,
 } from '@/store/actions/auth';
 import { userData } from '@/utils/user';
+import { removeError } from '@/store/actions/error';
 
 const Login = React.lazy(() => import('@/views/Auth/Login'));
 const Register = React.lazy(() => import('@/views/Auth/Register'));
@@ -15,6 +16,10 @@ const TwoFactor = React.lazy(() => import('@/views/Auth/TwoFactor'));
 const ResetPassword = React.lazy(() =>
   import('@/views/ForgotPassword/ResetPassword'),
 );
+const EmailConfirmation = React.lazy(() =>
+  import('@/views/EmailConfirmation/EmailConfirmation'),
+);
+const NotFound = React.lazy(() => import('@/views/Error/404'));
 const DefaultLayout = React.lazy(() =>
   import('@/container/DefaultLayout/DefaultLayout'),
 );
@@ -27,40 +32,51 @@ function Main() {
 
   useEffect(() => {
     const authToken = window.localStorage.getItem('jwt');
-    if (authToken) {
-      setAuthorizationToken(authToken);
-      getUserDetails()
-        .then((data) => {
-          const userDetails = userData(data);
-          dispatch(setCurrentUser(userDetails));
-        })
-        .catch(() => dispatch(removeCurrentUser()));
-    } else {
-      dispatch(removeCurrentUser());
-      history.push('/login');
-    }
+    setAuthorizationToken(authToken);
+    getUserDetails()
+      .then((data) => {
+        const userDetails = userData(data);
+        dispatch(setCurrentUser(userDetails));
+      })
+      .catch(() => dispatch(removeCurrentUser()));
   }, []);
+
+  history.listen(() => {
+    dispatch(removeError());
+  });
 
   return (
     <Switch>
+      <Route
+        exact
+        path="/two-factor"
+        name="Two Factor"
+        render={(props) => <TwoFactor {...props} />}
+      />
+      <Route
+        exact
+        path="/404"
+        name="Not Found"
+        render={(props) => <NotFound {...props} />}
+      />
       <PublicRoute
         exact
         path="/register"
         name="Register"
         component={Register}
       />
+      <PublicRoute
+        exact
+        path="/confirmemail"
+        name="Confirm Email"
+        component={EmailConfirmation}
+      />
       <PublicRoute exact path="/login" name="Login" component={Login} />
       <PublicRoute
         exact
-        path="/reset-password"
+        path="/resetpassword"
         name="Reset Password"
         component={ResetPassword}
-      />
-      <PublicRoute
-        exact
-        path="/two-factor"
-        name="Two Factor"
-        component={TwoFactor}
       />
       <PrivateRoute path="/" component={DefaultLayout} />
     </Switch>

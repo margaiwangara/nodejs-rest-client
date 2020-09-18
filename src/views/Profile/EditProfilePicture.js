@@ -5,13 +5,18 @@ import { addError } from '@/store/actions/error';
 import ErrorDisplay from '@/components/Error/ErrorDisplay';
 import { getUserDetails, setCurrentUser } from '@/store/actions/auth';
 import TitleComponent from '@/container/DefaultLayout/TitleComponent';
+import { useToasts } from 'react-toast-notifications';
+import FullLoading from '@/components/Loading/Loading';
 
 function EditProfilePicture() {
   const [profile, setProfile] = useState(null);
   // const [profileDisplay, setProfileDisplay] = useState('');
+  const [loading, setLoading] = useState(false);
+  // const [progress, setProgress] = useState(0);
   const { error } = useSelector((state) => state.error);
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const { addToast } = useToasts();
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -26,12 +31,20 @@ function EditProfilePicture() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    setLoading(true);
     const data = new FormData();
     data.append('file', profile);
 
     apiRequest('put', '/api/auth/account/edit/profile', data)
       .then((res) => {
-        alert('Profile image updated successfully');
+        const content = 'Profile image updated successfully';
+        addToast(content, {
+          appearance: 'success',
+          autoDismiss: true,
+        });
+        // setProgress(100);
+        setLoading(false);
         // update dispatch
         getUserDetails()
           .then((res) => {
@@ -42,12 +55,14 @@ function EditProfilePicture() {
           .catch((error) => alert(console.log(error)));
       })
       .catch((error) => {
+        setLoading(false);
         dispatch(addError(error));
       });
   };
   return (
-    <div className="card">
+    <div className="card" style={{ position: 'relative' }}>
       <TitleComponent title="Edit Profile Picture" />
+      {loading && <FullLoading />}
       <div className="card-body">
         <form onSubmit={handleSubmit}>
           <h4 className="pb-2 mb-3 border-bottom">Edit Profile Picture</h4>
@@ -70,11 +85,18 @@ function EditProfilePicture() {
                 </label>
               </div>
               <div className="input-group-append">
-                <button type="submit" className="btn btn-secondary">
+                <button type="submit" className="btn btn-primary">
                   Upload
                 </button>
               </div>
             </div>
+            {/* <div className="progress">
+              <div
+                className="progress-bar bg-success"
+                role="progressbar"
+                style={{ width: '25%' }}
+              ></div>
+            </div> */}
           </div>
         </form>
       </div>

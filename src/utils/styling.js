@@ -26,3 +26,28 @@ export const profileOverlay = {
 export const chatItemStyling = {
   lineHeight: 1.5,
 };
+
+export const loadingOverlay = {
+  height: '100%',
+  width: '100%',
+  backgroundColor: 'rgba(255, 255, 255, 0.75)',
+  zIndex: 100,
+  borderRadius: '10px',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  position: 'absolute',
+  flexDirection: 'column',
+  left: 0,
+  top: 0,
+};
+
+export const errorPageStyling = {
+  height: '100vh',
+  width: '100%',
+  padding: 0,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexDirection: 'column',
+};

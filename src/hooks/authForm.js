@@ -6,12 +6,12 @@ import {
   forgotPassword,
   setAuthorizationToken,
   getUserDetails,
-  send2faCode,
-  set2faCode,
   setCurrentUser,
 } from '@/store/actions/auth';
 import { addError, removeError } from '@/store/actions/error';
 import apiRequest from '@/services/api';
+import { useToasts } from 'react-toast-notifications';
+import { userData } from '@/utils/user';
 
 const INITIAL_STATE = {
   name: '',
@@ -23,6 +23,8 @@ const INITIAL_STATE = {
 
 function useAuthForm(page) {
   const [value, setValue] = useState(INITIAL_STATE);
+  const [loading, setLoading] = useState(false);
+  const { addToast } = useToasts();
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -31,56 +33,48 @@ function useAuthForm(page) {
 
   const handleSubmit = (e) => {
     // e.preventDefault();
-
-    // check if password and confirm password match
-
-    authUser(dispatch, page, value, history)
-      .then(() => console.log('Login Success'))
-      .catch(() => console.log('Login Failed'));
+    setLoading(true);
+    authUser(dispatch, page, value, history, setLoading)
+      .then(() => {
+        setLoading(false);
+        console.log('Login Success');
+      })
+      .catch(() => {
+        setLoading(false);
+        console.log('Login Failed');
+      });
   };
 
   const googleLoginSuccess = (response) => {
+    setLoading(true);
     apiRequest('post', '/api/auth/google', { tokenId: response.tokenId })
       .then(({ token }) => {
         setAuthorizationToken(token);
         getUserDetails().then((userResponse) => {
-          const { twoFactorEnable } = userResponse;
-          console.log('twoFactorEnable', twoFactorEnable);
-
-          // if 2fa is enabled send 2fa code else set token and redirect to home
-          if (twoFactorEnable) {
-            send2faCode()
-              .then(({ code, expiration }) => {
-                console.log('2faCodeSent. Yayyyy!');
-                dispatch(set2faCode(code, expiration));
-
-                // set jwt token in localStorage
-                window.localStorage.setItem('jwt', token);
-                history.push('/two-factor');
-              })
-              .catch((error) => {
-                console.log('2faCodeError. Nayyyy!', error);
-                history.push('/login');
-              });
-          } else {
-            // set jwt
-            window.localStorage.setItem('jwt', token);
-            // dispatch user details
-            const { ...userDetails } = userResponse;
-            dispatch(setCurrentUser(userDetails));
-            history.push('/');
-          }
+          // set jwt
+          window.localStorage.setItem('jwt', token);
+          // dispatch user details
+          const userDetails = userData(userResponse);
+          dispatch(setCurrentUser(userDetails));
+          setLoading(false);
+          history.push('/');
         });
       })
       .catch((error) => dispatch(addError(error)));
   };
 
   const googleLoginFailure = (response) => {
+    const content = 'Google login failed. Please try again later';
+    addToast(content, {
+      appearance: 'error',
+      autoDismiss: true,
+    });
     console.log('failure', response);
   };
 
   const handleForgotPassword = (e) => {
     e.preventDefault();
+    setLoading(true);
 
     if (!value.email) {
       const error = {
@@ -88,23 +82,30 @@ function useAuthForm(page) {
       };
 
       dispatch(addError(error));
+      setLoading(false);
       return;
     }
 
     forgotPassword(value)
       .then(() => {
         dispatch(removeError());
-        alert(
-          'An email to reset your password has been sent to the email address provided.',
-        );
+        setLoading(false);
+        const content =
+          'An email to reset your password has been sent to the email address provided.';
+        addToast(content, {
+          appearance: 'success',
+          autoDismiss: true,
+        });
       })
       .catch((error) => {
         dispatch(addError(error));
+        setLoading(false);
       });
   };
 
   return {
     value,
+    loading,
     handleChange,
     handleSubmit,
     handleForgotPassword,

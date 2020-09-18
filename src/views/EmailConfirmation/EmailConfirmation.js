@@ -10,9 +10,13 @@ function EmailConfirmation() {
   const token = parsed.token;
 
   useEffect(() => {
-    apiRequest('get', `/api/auth/confirmemail?token=${token}`)
-      .then(() => history.push('/login'))
-      .catch(() => history.push('/404'));
+    if (token) {
+      apiRequest('get', `/api/auth/confirmemail?token=${token}`)
+        .then(() => history.push('/login'))
+        .catch(() => history.push('/404'));
+    } else {
+      history.push('/404');
+    }
   }, []);
 
   return <div></div>;

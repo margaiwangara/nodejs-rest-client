@@ -10,12 +10,13 @@ import {
   setCurrentUser,
   removeCurrentUser,
 } from '@/store/actions/auth';
-import { addError } from '@/store/actions/error';
+import { addError, removeError } from '@/store/actions/error';
 import CountDown from 'react-countdown';
 import { wrapperStyling } from '@/utils/styling';
 import Loading from '@/utils/Loading';
 import TitleComponent from '@/container/DefaultLayout/TitleComponent';
 import { userData } from '@/utils/user';
+import FullLoading from '@/components/Loading/Loading';
 
 const INITIAL_STATE = {
   code: '',
@@ -23,6 +24,7 @@ const INITIAL_STATE = {
 
 function TwoFactor() {
   const [value, setValue] = useState(INITIAL_STATE);
+  const [loading, setLoading] = useState(false);
   const history = useHistory();
   const dispatch = useDispatch();
   const { error } = useSelector((state) => state.error);
@@ -34,20 +36,30 @@ function TwoFactor() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setValue(INITIAL_STATE);
+    setLoading(true);
     // check if code matches
-    confirm2faCode(value.code, dispatch).then(() => {
-      const token = window.localStorage.getItem('jwt');
-      if (token) {
-        getUserDetails()
-          .then((data) => {
-            const userDetails = userData(data);
-            dispatch(setCurrentUser(userDetails));
-            history.push('/');
-          })
-          .catch(() => dispatch(removeCurrentUser()));
-      }
-      history.push('/login');
-    });
+    confirm2faCode(value.code, dispatch)
+      .then(() => {
+        const token = window.localStorage.getItem('jwt');
+        if (token) {
+          getUserDetails()
+            .then((data) => {
+              const userDetails = userData(data);
+              dispatch(setCurrentUser(userDetails));
+
+              history.push('/');
+            })
+            .catch(() => {
+              dispatch(removeCurrentUser());
+              history.push('/login');
+            });
+        }
+        history.push('/login');
+      })
+      .catch(() => {
+        setLoading(false);
+        console.log('Invalid 2fa code');
+      });
   };
 
   useEffect(() => {
@@ -74,15 +86,22 @@ function TwoFactor() {
       // redirect
       history.push('/login');
     }
-  }, [code]);
+  }, [code, expiry]);
 
   const resendCode = (e) => {
+    setLoading(true);
+
     // send 2fa code
     send2faCode()
       .then(({ code, expiry }) => {
+        setLoading(false);
+        dispatch(removeError());
         dispatch(set2faCode(code, expiry));
       })
-      .catch((error) => addError(error));
+      .catch((error) => {
+        setLoading(false);
+        dispatch(addError(error));
+      });
   };
 
   const renderer = ({ minutes, seconds, completed }) => {
@@ -107,7 +126,11 @@ function TwoFactor() {
       <div className="row" style={wrapperStyling}>
         <div className="col-md-6 offset-md-3">
           <React.Suspense fallback={Loading()}>
-            <div className="card" style={{ marginTop: '20vh' }}>
+            <div
+              className="card"
+              style={{ marginTop: '20vh', position: 'relative' }}
+            >
+              {loading && <FullLoading />}
               <div className="card-body">
                 <form onSubmit={handleSubmit}>
                   <div className="text-center border-bottom mb-3">
