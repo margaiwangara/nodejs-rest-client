@@ -65,6 +65,15 @@ function useAuthForm(page) {
       .catch((error) => dispatch(addError(error)));
   };
 
+  const googleLoginFailure = (response) => {
+    const content = 'Google login failed. Please try again later';
+    addToast(content, {
+      appearance: 'error',
+      autoDismiss: true,
+    });
+    console.log('failure', response);
+  };
+
   const responseFacebook = (response) => {
     setLoading(true);
     apiRequest('post', '/api/auth/facebook', {
@@ -85,16 +94,14 @@ function useAuthForm(page) {
           })
           .catch((error) => console.log('Login With Facebook Failed'));
       })
-      .catch((error) => dispatch(addError(error)));
-  };
-
-  const googleLoginFailure = (response) => {
-    const content = 'Google login failed. Please try again later';
-    addToast(content, {
-      appearance: 'error',
-      autoDismiss: true,
-    });
-    console.log('failure', response);
+      .catch((error) => {
+        const content = 'Facebook login failed. Please try again later';
+        addToast(content, {
+          appearance: 'error',
+          autoDismiss: true,
+        });
+        console.log('Facebook Login Error', error);
+      });
   };
 
   const handleForgotPassword = (e) => {
