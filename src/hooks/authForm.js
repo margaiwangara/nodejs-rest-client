@@ -50,15 +50,40 @@ function useAuthForm(page) {
     apiRequest('post', '/api/auth/google', { tokenId: response.tokenId })
       .then(({ token }) => {
         setAuthorizationToken(token);
-        getUserDetails().then((userResponse) => {
-          // set jwt
-          window.localStorage.setItem('jwt', token);
-          // dispatch user details
-          const userDetails = userData(userResponse);
-          dispatch(setCurrentUser(userDetails));
-          setLoading(false);
-          history.push('/');
-        });
+        getUserDetails()
+          .then((userResponse) => {
+            // set jwt
+            window.localStorage.setItem('jwt', token);
+            // dispatch user details
+            const userDetails = userData(userResponse);
+            dispatch(setCurrentUser(userDetails));
+            setLoading(false);
+            history.push('/');
+          })
+          .catch((error) => console.log('Login With Google Failed'));
+      })
+      .catch((error) => dispatch(addError(error)));
+  };
+
+  const responseFacebook = (response) => {
+    setLoading(true);
+    apiRequest('post', '/api/auth/facebook', {
+      accessToken: response.accessToken,
+      userId: response.userID,
+    })
+      .then(({ token }) => {
+        setAuthorizationToken(token);
+        getUserDetails()
+          .then((userResponse) => {
+            // set jwt
+            window.localStorage.setItem('jwt', token);
+            // dispatch user details
+            const userDetails = userData(userResponse);
+            dispatch(setCurrentUser(userDetails));
+            setLoading(false);
+            history.push('/');
+          })
+          .catch((error) => console.log('Login With Facebook Failed'));
       })
       .catch((error) => dispatch(addError(error)));
   };
@@ -111,6 +136,7 @@ function useAuthForm(page) {
     handleForgotPassword,
     googleLoginSuccess,
     googleLoginFailure,
+    responseFacebook,
   };
 }
 

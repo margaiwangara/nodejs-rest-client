@@ -24,6 +24,7 @@ function AuthForm({ page, btnText, heading }) {
     handleForgotPassword,
     googleLoginSuccess,
     googleLoginFailure,
+    responseFacebook,
     loading,
   } = useAuthForm(page);
   const { handleSubmit, register, errors } = useForm();
@@ -34,10 +35,6 @@ function AuthForm({ page, btnText, heading }) {
   history.listen(() => {
     dispatch(removeError());
   });
-
-  const responseFacebook = (response) => {
-    console.log(response);
-  };
 
   return (
     <div className="card" style={{ marginTop: '20vh', position: 'relative' }}>
