@@ -6,12 +6,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSelector, useDispatch } from 'react-redux';
 import { getUsers } from '@/store/actions/user';
 import Loading from '@/utils/Loading';
+import SocketIO from 'socket.io-client';
+import { BASE_URL } from '@/utils/env';
+import { useToasts } from 'react-toast-notifications';
 
 function Home() {
   const [loadingUsers, setLoadingUsers] = useState(false);
+  const [endpoint, setEndpoint] = useState(BASE_URL);
+  const [messages, setMessages] = useState([]);
+  const [joined, setJoined] = useState([]);
   const [message, setMessage] = useState('');
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user);
   const { users, count } = useSelector((state) => state.users);
+  const { addToast } = useToasts();
 
   useEffect(() => {
     let isMounted = true;
@@ -35,6 +43,33 @@ function Home() {
     // eslint-disable-next-line
   }, [count]);
 
+  const getMessages = (msgs) => {
+    console.log('msgs', msgs);
+    setMessages(msgs);
+  };
+
+  useEffect(() => {
+    const socket = SocketIO(BASE_URL);
+    socket.emit('joined', { user: { id: user.id, name: user.name } });
+    socket.on('joined', (response) => {
+      setJoined([...joined, response.id]);
+      addToast(`${response.name} joined the conversation`, {
+        autoDismiss: true,
+        appearance: 'info',
+      });
+    });
+    socket.on('get_messages', (data) => {
+      console.log('gotten messages');
+      console.log(data);
+    });
+
+    return () => {
+      socket.emit('disconnect');
+      socket.off();
+    };
+  }, []);
+
+  console.log('joined', joined);
   return (
     <div className="card">
       <TitleComponent title="Dashboard" />
@@ -52,18 +87,26 @@ function Home() {
                 ) : (
                   <ul className="list-group">
                     {users.length > 0
-                      ? users.map((value) => (
-                          <li
-                            className="list-group-item d-flex justify-content-between align-items-center border-0 px-0"
-                            key={value.id}
-                          >
-                            <h6 className="my-0">{value.name}</h6>
-                            <span
-                              className="rounded-circle bg-secondary"
-                              style={{ width: '13px', height: '13px' }}
-                            ></span>
-                          </li>
-                        ))
+                      ? users.map((value) =>
+                          value.id !== user.id ? (
+                            <li
+                              className="list-group-item d-flex justify-content-between align-items-center border-0 px-0"
+                              key={value.id}
+                            >
+                              <h6 className="my-0">{value.name}</h6>
+                              <span
+                                className={`rounded-circle ${
+                                  joined.includes(value.id)
+                                    ? 'bg-success'
+                                    : 'bg-secondary'
+                                }`}
+                                style={{ width: '13px', height: '13px' }}
+                              ></span>
+                            </li>
+                          ) : (
+                            ''
+                          ),
+                        )
                       : ''}
                   </ul>
                 )}
