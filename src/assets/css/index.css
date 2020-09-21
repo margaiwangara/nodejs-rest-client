@@ -58,3 +58,13 @@
   text-align: center;
   line-height: 3.5;
 }
+
+/* facebook button */
+.facebook-btn {
+  background-color: #4c69ba;
+  color: #ffffff;
+}
+
+.facebook-btn:hover {
+  opacity: 0.75;
+}

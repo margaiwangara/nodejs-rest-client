@@ -5,11 +5,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeError } from '@/store/actions/error';
 import useAuthForm from '@/hooks/authForm';
-import { passwordToggleStyle, loadingOverlay } from '@/utils/styling';
+import { passwordToggleStyle } from '@/utils/styling';
 import { GoogleLogin } from 'react-google-login';
 import googleIcon from '@/assets/images/google.svg';
-import { GOOGLE_CLIENT_ID } from '@/utils/env';
+import facebookIcon from '@/assets/images/facebook.svg';
+import { GOOGLE_CLIENT_ID, FACEBOOK_CLIENT_ID } from '@/utils/env';
 import FullLoading from '@/components/Loading/Loading';
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
+import SocialButton from '@/utils/SocialButton';
 
 function AuthForm({ page, btnText, heading }) {
   const [passwordToggle, setPasswordToggle] = useState(false);
@@ -31,6 +34,10 @@ function AuthForm({ page, btnText, heading }) {
   history.listen(() => {
     dispatch(removeError());
   });
+
+  const responseFacebook = (response) => {
+    console.log(response);
+  };
 
   return (
     <div className="card" style={{ marginTop: '20vh', position: 'relative' }}>
@@ -173,28 +180,32 @@ function AuthForm({ page, btnText, heading }) {
               <GoogleLogin
                 clientId={GOOGLE_CLIENT_ID}
                 render={(props) => (
-                  <button
-                    type="button"
-                    onClick={props.onClick}
-                    disabled={props.disabled}
-                    className="d-flex align-items-center btn-outline-secondary justify-content-center btn btn-block my-3 font-weight-bold"
-                    style={{ paddingTop: '13px', paddingBottom: '13px' }}
-                  >
-                    <img
-                      src={googleIcon}
-                      alt="google-icon"
-                      height="18"
-                      width="18"
-                      className="mr-2"
-                    />
-                    {page === 'login'
-                      ? 'Login With Google'
-                      : 'Sign Up With Google'}
-                  </button>
+                  <SocialButton
+                    renderProps={props}
+                    btnProps={{
+                      btnClass: 'btn-outline-secondary',
+                      icon: googleIcon,
+                      btnText: 'Login With Google',
+                    }}
+                  />
                 )}
                 onSuccess={googleLoginSuccess}
                 onFailure={googleLoginFailure}
                 cookiePolicy={'single_host_origin'}
+              />
+              <FacebookLogin
+                appId={FACEBOOK_CLIENT_ID}
+                callback={responseFacebook}
+                render={(props) => (
+                  <SocialButton
+                    renderProps={props}
+                    btnProps={{
+                      btnClass: 'facebook-btn',
+                      icon: facebookIcon,
+                      btnText: 'Login With Facebook',
+                    }}
+                  />
+                )}
               />
             </>
           )}
