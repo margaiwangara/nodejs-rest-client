@@ -14,13 +14,25 @@ function Home() {
   const { users, count } = useSelector((state) => state.users);
 
   useEffect(() => {
+    let isMounted = true;
     setLoadingUsers(true);
     getUsers(dispatch)
       .then(() => {
-        console.log('Users acquired');
-        setLoadingUsers(false);
+        if (isMounted) {
+          console.log('Users acquired');
+          setLoadingUsers(false);
+        }
       })
-      .catch(() => console.log('Users not acquired'));
+      .catch(() => {
+        if (isMounted) {
+          console.log('Users not acquired');
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+    // eslint-disable-next-line
   }, [count]);
 
   return (

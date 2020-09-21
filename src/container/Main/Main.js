@@ -33,12 +33,24 @@ function Main() {
   useEffect(() => {
     const authToken = window.localStorage.getItem('jwt');
     setAuthorizationToken(authToken);
+    let isMounted = true;
     getUserDetails()
       .then((data) => {
-        const userDetails = userData(data);
-        dispatch(setCurrentUser(userDetails));
+        if (isMounted) {
+          const userDetails = userData(data);
+          dispatch(setCurrentUser(userDetails));
+        }
       })
-      .catch(() => dispatch(removeCurrentUser()));
+      .catch(() => {
+        if (isMounted) {
+          dispatch(removeCurrentUser());
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+    // eslint-disable-next-line
   }, []);
 
   history.listen(() => {

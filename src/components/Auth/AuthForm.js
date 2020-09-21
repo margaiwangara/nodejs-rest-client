@@ -13,6 +13,7 @@ import { GOOGLE_CLIENT_ID, FACEBOOK_CLIENT_ID } from '@/utils/env';
 import FullLoading from '@/components/Loading/Loading';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import SocialButton from '@/utils/SocialButton';
+import ErrorDisplay from '@/components/Error/ErrorDisplay';
 
 function AuthForm({ page, btnText, heading }) {
   const [passwordToggle, setPasswordToggle] = useState(false);
@@ -42,21 +43,7 @@ function AuthForm({ page, btnText, heading }) {
       <div className="card-body">
         <form onSubmit={handleSubmit(onSubmit)}>
           <h3 className="text-center pb-2 border-bottom mb-3">{heading}</h3>
-          {error ? (
-            <div className="alert alert-danger">
-              {Array.isArray(error.message) ? (
-                <ul className="list-unstyled p-0 m-0">
-                  {error.message.map((e, i) => (
-                    <li key={i}>{e}</li>
-                  ))}
-                </ul>
-              ) : (
-                error.message
-              )}
-            </div>
-          ) : (
-            ''
-          )}
+          <ErrorDisplay error={error} />
           {page === 'register' ? (
             <div className="form-group">
               <input
@@ -190,6 +177,7 @@ function AuthForm({ page, btnText, heading }) {
                 onFailure={googleLoginFailure}
                 cookiePolicy={'single_host_origin'}
               />
+
               <FacebookLogin
                 appId={FACEBOOK_CLIENT_ID}
                 callback={responseFacebook}
@@ -197,7 +185,9 @@ function AuthForm({ page, btnText, heading }) {
                   <SocialButton
                     renderProps={props}
                     btnProps={{
-                      btnClass: 'facebook-btn',
+                      btnClass: `facebook-btn ${
+                        process.env.NODE_ENV === 'development' ? 'disabled' : ''
+                      }`,
                       icon: facebookIcon,
                       btnText: 'Login With Facebook',
                     }}
