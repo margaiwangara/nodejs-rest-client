@@ -60,12 +60,16 @@ function useAuthForm(page) {
             setLoading(false);
             history.push('/');
           })
-          .catch((error) => console.log('Login With Google Failed'));
+          .catch((error) => {
+            setLoading(false);
+            console.log('Login With Google Failed. User data not acquired');
+          });
       })
       .catch((error) => dispatch(addError(error)));
   };
 
   const googleLoginFailure = (response) => {
+    setLoading(false);
     const content = 'Google login failed. Please try again later';
     addToast(content, {
       appearance: 'error',
@@ -92,9 +96,13 @@ function useAuthForm(page) {
             setLoading(false);
             history.push('/');
           })
-          .catch((error) => console.log('Login With Facebook Failed'));
+          .catch((error) => {
+            setLoading(false);
+            console.log('User data not acquired');
+          });
       })
       .catch((error) => {
+        setLoading(false);
         const content = 'Facebook login failed. Please try again later';
         addToast(content, {
           appearance: 'error',
