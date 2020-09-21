@@ -3,6 +3,7 @@ import routes from '@/routes';
 import Loading from '@/utils/Loading';
 import { Route, Switch } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import SimpleBar from 'simplebar-react';
 
 const DefaultSideBar = React.lazy(() => import('./DefaultSideBar'));
 
@@ -32,28 +33,40 @@ function DefaultLayout() {
             />
           </button>
         </nav>
-        <div className="px-5">
-          <div className="row my-5">
-            <div className="col-md-12">
-              <React.Suspense fallback={Loading()}>
-                <Switch>
-                  {routes.map((route, index) =>
-                    route.component ? (
-                      <Route
-                        path={route.path}
-                        exact={route.exact}
-                        name={route.name}
-                        key={index}
-                        render={(props) => <route.component {...props} />}
-                      />
-                    ) : (
-                      ''
-                    ),
-                  )}
-                </Switch>
-              </React.Suspense>
+        <div className="h-100 w-100">
+          <SimpleBar
+            autoHide={false}
+            className="px-5"
+            style={{
+              maxHeight: '100%',
+              width: '100%',
+              overflowY: 'auto',
+              overflowX: 'hidden',
+              paddingBottom: '100px',
+            }}
+          >
+            <div className="row mt-3">
+              <div className="col-md-12">
+                <React.Suspense fallback={Loading()}>
+                  <Switch>
+                    {routes.map((route, index) =>
+                      route.component ? (
+                        <Route
+                          path={route.path}
+                          exact={route.exact}
+                          name={route.name}
+                          key={index}
+                          render={(props) => <route.component {...props} />}
+                        />
+                      ) : (
+                        ''
+                      ),
+                    )}
+                  </Switch>
+                </React.Suspense>
+              </div>
             </div>
-          </div>
+          </SimpleBar>
         </div>
       </div>
     </div>
