@@ -1,5 +1,6 @@
 @import 'bootstrap.min.css';
 @import 'shards.min.css';
+@import 'sidebar.css';
 
 .files input {
   outline: 2px dashed #92b0b3;

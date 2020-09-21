@@ -13,10 +13,10 @@ export const passwordToggleStyle = {
 
 export const profileOverlay = {
   position: 'absolute',
-  height: '50px',
-  width: '50px',
-  right: 0,
-  bottom: 0,
+  height: '40px',
+  width: '40px',
+  right: '-15px',
+  bottom: '-10px',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
