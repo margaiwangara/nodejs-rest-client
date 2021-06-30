@@ -22,7 +22,6 @@ function EditProfilePicture() {
     e.preventDefault();
     let reader = new FileReader();
     let file = e.target.files[0];
-    console.log('target', e.target.files[0]);
 
     setProfile(file);
 
@@ -49,10 +48,10 @@ function EditProfilePicture() {
         getUserDetails()
           .then((res) => {
             const { profileImage } = res;
-            console.log('profileImage', profileImage);
+
             dispatch(setCurrentUser({ ...user, profileImage }));
           })
-          .catch((error) => alert(console.log(error)));
+          .catch((error) => alert(JSON.stringify(error)));
       })
       .catch((error) => {
         setLoading(false);

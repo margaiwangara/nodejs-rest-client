@@ -4,8 +4,7 @@ import apiRequest from '@/services/api';
 import { addError, removeError } from '@/store/actions/error';
 import ErrorDisplay from '@/components/Error/ErrorDisplay';
 import TitleComponent from '@/container/DefaultLayout/TitleComponent';
-import { useToasts } from 'react-toast-notifications';
-import FullLoading from '@/components/Loading/Loading';
+import { useToast } from '@/hooks/useToast';
 
 const INITIAL_STATE = {
   current_password: '',
@@ -17,7 +16,7 @@ function ChangePassword() {
   const [value, setValue] = useState(INITIAL_STATE);
   const { error } = useSelector((state) => state.error);
   const [loading, setLoading] = useState(false);
-  const { addToast } = useToasts();
+  const { toast } = useToast();
   const dispatch = useDispatch();
 
   const handleChange = (e) =>
@@ -33,29 +32,23 @@ function ChangePassword() {
       confirmPassword: value.confirm_password,
     })
       .then((res) => {
-        console.log('changed password');
         setLoading(false);
-        const content = 'Password changed successfully';
-        addToast(content, {
-          appearance: 'success',
-          autoDismiss: true,
-        });
         dispatch(removeError());
         setValue(INITIAL_STATE);
+        return toast?.success('Password updated');
       })
       .catch((error) => {
         setLoading(false);
         setValue(INITIAL_STATE);
         dispatch(addError(error));
+        return toast?.error('Password update failed');
       });
   };
   return (
-    <div className="card" style={{ position: 'relative' }}>
-      {loading && <FullLoading />}
+    <>
       <TitleComponent title="Change Password" />
-      <div className="card-body">
-        <form onSubmit={handleSubmit}>
-          <h4 className="pb-2 mb-3 border-bottom">Change Password</h4>
+      <section className="default-inner__end--shared shadow">
+        <form onSubmit={handleSubmit} className="p-2 w-100">
           <ErrorDisplay error={error} />
           <div className="form-group">
             <label htmlFor="currentPasswordField">Current Password</label>
@@ -90,12 +83,12 @@ function ChangePassword() {
               onChange={handleChange}
             />
           </div>
-          <button type="submit" className="btn btn-primary btn-block">
-            Change Password
+          <button type="submit" className="btn btn-success">
+            Save
           </button>
         </form>
-      </div>
-    </div>
+      </section>
+    </>
   );
 }
 

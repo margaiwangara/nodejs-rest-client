@@ -1,25 +1,26 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import apiRequest from '@/services/api';
-import { setCurrentUser } from '@/store/actions/auth';
+import { setCurrentUser, getUserDetails } from '@/store/actions/auth';
 import { addError, removeError } from '@/store/actions/error';
 import ErrorDisplay from '@/components/Error/ErrorDisplay';
 import TitleComponent from '@/container/DefaultLayout/TitleComponent';
-import { useToasts } from 'react-toast-notifications';
-import FullLoading from '@/components/Loading/Loading';
+import { useToast } from '@/hooks/useToast';
+import Dropzone from '@/components/Dropzone';
 
 function EditProfile() {
   const { user } = useSelector((state) => state.user);
   const { error } = useSelector((state) => state.error);
   const [loading, setLoading] = useState(false);
-  const { addToast } = useToasts();
+  const [files, setFiles] = useState([]);
+  const { toast } = useToast();
   const dispatch = useDispatch();
 
   const INITIAL_STATE = {
-    name: user.name ? user.name : '',
-    surname: user.surname ? user.surname : '',
-    email: user.email ? user.email : '',
-    two_factor: user.twoFactorEnable,
+    name: '',
+    surname: '',
+    email: '',
+    two_factor: user?.twoFactorEnable,
   };
 
   const [value, setValue] = useState(INITIAL_STATE);
@@ -27,101 +28,139 @@ function EditProfile() {
   const handleChange = (e) =>
     setValue({ ...value, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setLoading(true);
-    apiRequest('put', '/api/auth/account/edit', value)
-      .then(({ updatedUser }) => {
-        const { name, surname, email, twoFactorEnable } = updatedUser;
-        dispatch(
-          setCurrentUser({ ...user, name, surname, email, twoFactorEnable }),
-        );
-        dispatch(removeError());
-        setLoading(false);
-        console.log('Data updated');
-        const content = 'Profile data updated successfully';
-        addToast(content, {
-          appearance: 'success',
-          autoDismiss: true,
-        });
-      })
-      .catch((error) => {
-        setLoading(false);
-        dispatch(addError(error));
-      });
+    try {
+      setLoading(true);
+      const result = await apiRequest('put', '/api/auth/account/edit', value);
+      const { name, surname, email, twoFactorEnable } = result?.updatedUser;
+      let profile = user?.profileImage;
+
+      if (files.length > 0) {
+        profile = await uploadProfileImage();
+      }
+
+      dispatch(
+        setCurrentUser({
+          ...user,
+          name,
+          surname,
+          email,
+          twoFactorEnable,
+          profileImage: profile,
+        }),
+      );
+      dispatch(removeError());
+      setLoading(false);
+
+      return toast?.success('Profile updated');
+    } catch (error) {
+      setLoading(false);
+      dispatch(addError(error));
+      return toast?.error('Profile update failed');
+    }
+  };
+
+  const uploadProfileImage = async () => {
+    try {
+      const data = new FormData();
+      data.append('file', files[0]);
+
+      await apiRequest('put', '/api/auth/account/edit/profile', data);
+      // get current user data
+      const current = await getUserDetails();
+      const { profileImage } = current;
+
+      // mock
+      // dispatch(setCurrentUser({ ...user, profileImage: 'no-image.jpg' }));
+      // dispatch(setCurrentUser({ ...user, profileImage }));
+      // return toast?.success('Profile image updated');
+      return profileImage;
+    } catch (error) {
+      return toast?.error('Profile image not updated');
+    }
   };
 
   return (
-    <div className="card" style={{ position: 'relative' }}>
-      {loading && <FullLoading />}
+    <>
       <TitleComponent title="Edit Profile" />
-      <div className="card-body">
-        <form onSubmit={handleSubmit}>
+      <section className="default-inner__end--shared shadow">
+        <form
+          action="#"
+          method="POST"
+          onSubmit={handleSubmit}
+          className="p-2 w-100"
+        >
           <ErrorDisplay error={error} />
-          <h4 className="pb-2 mb-3 border-bottom">Edit Profile</h4>
-          <div className="row">
-            <div className="col-md-6">
-              <div className="form-group">
-                <label htmlFor="nameField">Name</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="name"
-                  id="nameField"
-                  onChange={handleChange}
-                  value={value.name}
-                />
+          <fieldset disabled={loading}>
+            <div className="row">
+              <div className="col-md-6">
+                <div className="form-group">
+                  <label htmlFor="nameField">Name</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="name"
+                    id="nameField"
+                    onChange={handleChange}
+                    defaultValue={user?.name}
+                  />
+                </div>
+              </div>
+              <div className="col-md-6">
+                <div className="form-group">
+                  <label htmlFor="surNameField">Surname</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="surname"
+                    id="surnameField"
+                    onChange={handleChange}
+                    defaultValue={user?.surname}
+                  />
+                </div>
               </div>
             </div>
-            <div className="col-md-6">
-              <div className="form-group">
-                <label htmlFor="surNameField">Surname</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="surname"
-                  id="surnameField"
-                  onChange={handleChange}
-                  value={value.surname}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="form-group">
-            <label htmlFor="emailField">E-Mail</label>
-            <input
-              type="email"
-              className="form-control"
-              name="email"
-              id="emailField"
-              onChange={handleChange}
-              value={value.email}
-            />
-          </div>
-          <div className="form-group">
-            <div className="custom-control custom-switch mb-3">
+            <div className="form-group">
+              <label htmlFor="emailField">Email</label>
               <input
-                type="checkbox"
-                className="custom-control-input"
-                id="toggle2Factor"
-                name="two_factor"
-                checked={value.two_factor}
-                onChange={() =>
-                  setValue({ ...value, two_factor: !value.two_factor })
-                }
+                type="email"
+                className="form-control"
+                name="email"
+                id="emailField"
+                onChange={handleChange}
+                defaultValue={user?.email}
               />
-              <label className="custom-control-label" htmlFor="toggle2Factor">
-                Enable 2-Factor Auth
-              </label>
             </div>
-          </div>
-          <button type="submit" className="btn btn-primary btn-block">
-            Edit Profile
-          </button>
+            <div className="form-group">
+              <label htmlFor="profile-image">Profile Image</label>
+              <Dropzone files={files} setFiles={setFiles} />
+            </div>
+            <div className="form-group">
+              <div className="custom-control custom-switch mb-3">
+                <input
+                  type="checkbox"
+                  className="custom-control-input"
+                  id="toggle2Factor"
+                  name="two_factor"
+                  defaultChecked={user?.twoFactorEnable}
+                  onChange={(e) => {
+                    setValue({ ...value, two_factor: !value.two_factor });
+                  }}
+                />
+                <label className="custom-control-label" htmlFor="toggle2Factor">
+                  Enable 2-Factor Auth
+                </label>
+              </div>
+            </div>
+            <button type="submit" className="btn btn-success">
+              Save
+            </button>
+          </fieldset>
         </form>
-      </div>
-    </div>
+      </section>
+    </>
   );
 }
 

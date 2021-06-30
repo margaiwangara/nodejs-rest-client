@@ -17,6 +17,7 @@ import Loading from '@/utils/Loading';
 import TitleComponent from '@/container/DefaultLayout/TitleComponent';
 import { userData } from '@/utils/user';
 import FullLoading from '@/components/Loading/Loading';
+import { RETURN_URL } from '@/utils/constants';
 
 const INITIAL_STATE = {
   code: '',
@@ -46,8 +47,11 @@ function TwoFactor() {
             .then((data) => {
               const userDetails = userData(data);
               dispatch(setCurrentUser(userDetails));
-
-              history.push('/');
+              // check if is in ls
+              const returnUrl = window.localStorage.getItem(RETURN_URL);
+              // delete from ls
+              window.localStorage.removeItem(RETURN_URL);
+              history.replace(returnUrl || '/');
             })
             .catch(() => {
               dispatch(removeCurrentUser());
@@ -58,7 +62,6 @@ function TwoFactor() {
       })
       .catch(() => {
         setLoading(false);
-        console.log('Invalid 2fa code');
       });
   };
 

@@ -38,7 +38,7 @@ function AuthForm({ page, btnText, heading }) {
   });
 
   return (
-    <div className="card" style={{ marginTop: '20vh', position: 'relative' }}>
+    <div className="card" style={{ position: 'relative' }}>
       {loading && <FullLoading />}
       <div className="card-body">
         <form onSubmit={handleSubmit(onSubmit)}>

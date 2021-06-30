@@ -1,185 +1,124 @@
 import React, { useEffect, useState } from 'react';
 import TitleComponent from '@/container/DefaultLayout/TitleComponent';
-import SimpleBar from 'simplebar-react';
-import { chatItemStyling } from '@/utils/styling';
+import { getPosts, addPost, deletePost } from '@/store/actions/posts';
+import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useSelector, useDispatch } from 'react-redux';
-import { getUsers } from '@/store/actions/user';
-import Loading from '@/utils/Loading';
-import SocketIO from 'socket.io-client';
-import { BASE_URL } from '@/utils/env';
-import { useToasts } from 'react-toast-notifications';
+import { loadProfileImage } from '@/utils/loadProfileImage';
+import { formatDistanceToNow } from 'date-fns';
+import Spinner from '@/components/Spinner';
+import { useToast } from '@/hooks/useToast';
+import Empty from '@/components/Empty';
 
 function Home() {
-  const [loadingUsers, setLoadingUsers] = useState(false);
-  const [endpoint, setEndpoint] = useState(BASE_URL);
-  const [messages, setMessages] = useState([]);
-  const [joined, setJoined] = useState([]);
-  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [addLoading, setAddLoading] = useState(false);
+  const [removeLoading, setRemoveLoading] = useState(false);
+  const [content, setContent] = useState('');
   const dispatch = useDispatch();
+  const { posts } = useSelector((state) => state.posts);
+  const { error } = useSelector((state) => state.error);
   const { user } = useSelector((state) => state.user);
-  const { users, count } = useSelector((state) => state.users);
-  const { addToast } = useToasts();
+  const { toast } = useToast();
 
   useEffect(() => {
-    let isMounted = true;
-    setLoadingUsers(true);
-    getUsers(dispatch)
-      .then(() => {
-        if (isMounted) {
-          console.log('Users acquired');
-          setLoadingUsers(false);
-        }
-      })
-      .catch(() => {
-        if (isMounted) {
-          console.log('Users not acquired');
-        }
-      });
+    getPosts(dispatch, setLoading);
+  }, [JSON.stringify(posts), JSON.stringify(error)]);
 
-    return () => {
-      isMounted = false;
-    };
-    // eslint-disable-next-line
-  }, [count]);
-
-  const getMessages = (msgs) => {
-    console.log('msgs', msgs);
-    setMessages(msgs);
+  const handleSubmit = (e) => {
+    // e.preventDefault();
+    // take content and send to backend
+    addPost(dispatch, setAddLoading, { content }).catch(() =>
+      toast?.error(error?.message),
+    );
+    setContent('');
   };
 
-  useEffect(() => {
-    const socket = SocketIO(BASE_URL);
-    socket.emit('joined', { user: { id: user.id, name: user.name } });
-    socket.on('joined', (response) => {
-      setJoined([...joined, response.id]);
-      addToast(`${response.name} joined the conversation`, {
-        autoDismiss: true,
-        appearance: 'info',
-      });
-    });
-    socket.on('get_messages', (data) => {
-      console.log('gotten messages');
-      console.log(data);
-    });
+  const handleDelete = (id) => {
+    deletePost(dispatch, setRemoveLoading, id).catch(() =>
+      toast?.error(error?.message),
+    );
+  };
 
-    return () => {
-      socket.emit('disconnect');
-      socket.off();
-    };
-  }, []);
+  const contentLoading = !content || loading || addLoading;
 
-  console.log('joined', joined);
   return (
-    <div className="card">
+    <>
       <TitleComponent title="Dashboard" />
-      <div className="card-body">
-        <h3>Dashboard</h3>
-        <div className="row my-4">
-          <div className="col-md-5">
-            <div className="card mb-3">
-              <div className="card-header bg-primary">
-                <h5 className="my-0 text-white font-weight-bold">Users</h5>
-              </div>
-              <div className="card-body">
-                {loadingUsers ? (
-                  <Loading />
-                ) : (
-                  <ul className="list-group">
-                    {users.length > 0
-                      ? users.map((value) =>
-                          value.id !== user.id ? (
-                            <li
-                              className="list-group-item d-flex justify-content-between align-items-center border-0 px-0"
-                              key={value.id}
-                            >
-                              <h6 className="my-0">{value.name}</h6>
-                              <span
-                                className={`rounded-circle ${
-                                  joined.includes(value.id)
-                                    ? 'bg-success'
-                                    : 'bg-secondary'
-                                }`}
-                                style={{ width: '13px', height: '13px' }}
-                              ></span>
-                            </li>
-                          ) : (
-                            ''
-                          ),
-                        )
-                      : ''}
-                  </ul>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="col-md-7">
-            <div className="card">
-              <div className="card-body p-0">
-                <SimpleBar
-                  style={{
-                    height: '400px',
-                    overflowY: 'auto',
-                    overflowX: 'hidden',
-                    padding: '17.5px 30px',
-                  }}
-                >
-                  <div
-                    style={chatItemStyling}
-                    className="d-inline-flex flex-column bg-light rounded p-2 mb-2"
-                  >
-                    <h6
-                      className="p-0 m-0 font-weight-bold"
-                      style={{ fontSize: '14px' }}
-                    >
-                      Jane Doe
-                    </h6>
-                    <p className="p-0 mb-1 small">
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                      Repudiandae, asperiores.
-                    </p>
-                    <span className="text-muted" style={{ fontSize: '12px' }}>
-                      15th Sept, 2020 9:16pm
-                    </span>
-                  </div>
-                </SimpleBar>
-                <div
-                  className="input-group rounded"
-                  style={{ overflow: 'hidden' }}
-                >
-                  <input
-                    type="text"
-                    name="message"
-                    className="form-control"
-                    placeholder="Type something..."
-                    style={{
-                      borderRadius: 0,
-                      borderRight: 'none',
-                      borderBottom: 'none',
-                      borderLeft: 'none',
-                    }}
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                  />
-                  <div className="input-group-append">
-                    <button
-                      className="btn py-1 px-2 btn-secondary"
-                      style={{ borderRadius: 0 }}
-                    >
-                      <FontAwesomeIcon
-                        icon="arrow-alt-circle-right"
-                        style={{ fontSize: '25px' }}
-                      />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+      <section className="default-inner__end--shared default-inner__end__post--submit shadow">
+        <figure className="user__avatar">{loadProfileImage(user, 40)}</figure>
+        <section className="default-inner__end__text">
+          <textarea
+            name="content"
+            id="post-id"
+            placeholder="Say something..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+          />
+        </section>
+        <button
+          className={`btn btn-success${contentLoading ? ' disabled' : ''}`}
+          type="button"
+          onClick={handleSubmit}
+        >
+          <span>
+            <FontAwesomeIcon icon="link" />
+          </span>
+          <span>Post</span>
+        </button>
+      </section>
+      {loading ? (
+        <Spinner />
+      ) : posts?.length === 0 ? (
+        <Empty />
+      ) : (
+        posts?.map((post) => (
+          <Post
+            post={post}
+            user={post?.user}
+            current={user}
+            key={post._id}
+            handleDelete={handleDelete}
+          />
+        ))
+      )}
+    </>
   );
 }
+
+const Post = ({ user, post, handleDelete, current }) => {
+  return (
+    <section className="default-inner__end--shared default-inner__end__post shadow">
+      <section className="default-inner__end__post__start">
+        <div className="left">
+          <figure className="user__avatar">{loadProfileImage(user, 40)}</figure>
+          <section className="user__details">
+            <h5 className="user__title">
+              {user?.name} {user?.surname}
+            </h5>
+            <h6 className="user__subtitle">
+              {formatDistanceToNow(new Date(post?.createdAt), {
+                addSuffix: true,
+              })}
+            </h6>
+          </section>
+        </div>
+
+        {current?.id === post?.user?.id && (
+          <button
+            className="btn btn-link"
+            title="🗑️"
+            onClick={() => handleDelete(post._id)}
+            type="button"
+          >
+            <FontAwesomeIcon icon="trash-alt" />
+          </button>
+        )}
+      </section>
+      <section className="default-inner__end__post__end">
+        <p>{post?.content}</p>
+      </section>
+    </section>
+  );
+};
 
 export default Home;
