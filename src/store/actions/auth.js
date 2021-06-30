@@ -6,6 +6,7 @@ import {
 } from '../actionTypes';
 import apiRequest, { setTokenHeader } from '@/services/api';
 import { addError } from './error';
+import { RETURN_URL } from '@/utils/constants';
 
 function setAuthorizationToken(token) {
   setTokenHeader(token);
@@ -38,10 +39,15 @@ function logoutUser(dispatch) {
       dispatch(removeCurrentUser());
       resolve();
     }
+
+    reject();
   });
 }
 
 function authUser(dispatch, page, formValue, history, setLoading) {
+  // check for return url
+  const returnUrl = window.localStorage.getItem(RETURN_URL);
+
   return new Promise((resolve, reject) => {
     return apiRequest('post', `/api/auth/${page}`, formValue)
       .then(({ token }) => {
@@ -52,8 +58,8 @@ function authUser(dispatch, page, formValue, history, setLoading) {
           setAuthorizationToken(token);
           getUserDetails().then((userResponse) => {
             const { isEmailConfirmed, twoFactorEnable } = userResponse;
-            console.log('isEmailConfirmed', isEmailConfirmed);
-            console.log('twoFactorEnable', twoFactorEnable);
+            //
+            //
             if (!isEmailConfirmed) {
               const emailConfirmError = {
                 message:
@@ -69,7 +75,7 @@ function authUser(dispatch, page, formValue, history, setLoading) {
               setLoading(true);
               send2faCode()
                 .then(({ code, expiration }) => {
-                  console.log('2faCodeSent. Yayyyy!');
+                  //
 
                   dispatch(set2faCode(code, expiration));
                   setLoading(false);
@@ -78,7 +84,7 @@ function authUser(dispatch, page, formValue, history, setLoading) {
                   history.push('/two-factor');
                 })
                 .catch((error) => {
-                  console.log('2faCodeError. Nayyyy!', error);
+                  //
                   setLoading(false);
                   history.push('/login');
                 });
@@ -88,11 +94,15 @@ function authUser(dispatch, page, formValue, history, setLoading) {
               // dispatch user details
               const { ...userDetails } = userResponse;
               dispatch(setCurrentUser(userDetails));
-              history.push('/');
+
+              // clear local storage
+              window.localStorage.removeItem(RETURN_URL);
+              history.replace(returnUrl || '/');
             }
           });
         } else if (page === 'register') {
-          history.push('/login');
+          window.localStorage.removeItem(RETURN_URL);
+          history.replace(returnUrl || '/');
         }
         resolve();
       })
@@ -138,7 +148,6 @@ function getUserDetails() {
         resolve(data);
       })
       .catch((error) => {
-        console.log(error);
         reject();
       });
   });
@@ -151,8 +160,6 @@ function forgotPassword(formData) {
         resolve();
       })
       .catch((error) => {
-        console.log('forgotPasswordError', error);
-
         reject(error);
       });
   });
@@ -169,7 +176,6 @@ function resetPassword(queryData, formData) {
         resolve();
       })
       .catch((error) => {
-        console.log('resetPasswordError', error);
         reject(error);
       });
   });

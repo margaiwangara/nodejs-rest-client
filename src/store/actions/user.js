@@ -14,7 +14,6 @@ function getUsers(dispatch) {
         resolve();
       })
       .catch((error) => {
-        console.log(error);
         reject();
       });
   });
