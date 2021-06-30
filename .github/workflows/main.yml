@@ -1,4 +1,4 @@
-name: Drift Application With React.js
+name: Mtandao Application with React.js
 'on':
   push:
     branches: master
@@ -11,10 +11,22 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Build React Project
+      - name: Set Node.js Version
         uses: actions/setup-node@v1
         with:
           node-version: 12.x
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - uses: actions/cache@v2
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
 
       - name: Cache/Restore node_modules
         uses: actions/cache@v2
@@ -24,10 +36,11 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-npm-cache-
 
-      - name: Install Dependencies and Build
-        run: |
-          npm install
-          npm run build --if-present
+      - name: Install dependencies
+        run: yarn install --prefer-offline
+
+      - name: Build project
+        run: npm run build --if-present
         env:
           CI: false
 
@@ -35,9 +48,10 @@ jobs:
         run: find build/ -print
 
       - name: Deploy to ftp server
-        uses: SamKirkland/FTP-Deploy-Action@3.1.1
+        uses: SamKirkland/FTP-Deploy-Action@4.1.0
         with:
-          ftp-server: '${{ secrets.FTP_SERVER }}/drift/'
-          ftp-username: '${{ secrets.FTP_USERNAME }}'
-          ftp-password: '${{ secrets.FTP_PASSWORD }}'
-          local-dir: build
+          server: '${{ secrets.FTP_SERVER }}'
+          username: '${{ secrets.FTP_USERNAME }}'
+          password: '${{ secrets.FTP_PASSWORD }}'
+          local-dir: build/
+          server-dir: projects/mtandao/client
