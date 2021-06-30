@@ -6,15 +6,13 @@ const AuthForm = React.lazy(() => import('@/components/Auth/AuthForm'));
 
 function AuthContainer(props) {
   return (
-    <div className="container">
-      <div style={wrapperStyling} className="row">
-        <div className="col-md-6 offset-md-3">
-          <React.Suspense fallback={Loading()}>
-            <AuthForm {...props} />
-          </React.Suspense>
-        </div>
-      </div>
-    </div>
+    <section style={{ height: '100vh', width: '100%' }}>
+      <section className="h-100 py-3 px-2 d-flex align-items-center justify-content-center">
+        <React.Suspense fallback={Loading()}>
+          <AuthForm {...props} />
+        </React.Suspense>
+      </section>
+    </section>
   );
 }
 

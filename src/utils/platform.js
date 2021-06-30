@@ -33,7 +33,6 @@ function getBrowser(window) {
   } else if (window.navigator.userAgent.indexOf('Opera') !== -1) {
     currentBrowser = 'YaBrowser';
   } else {
-    console.log('Others');
   }
 
   return currentBrowser;

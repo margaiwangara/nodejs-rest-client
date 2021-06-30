@@ -6,6 +6,7 @@ import * as serviceWorker from './serviceWorker';
 // css
 import 'simplebar/dist/simplebar.min.css';
 import './assets/css/index.css';
+import 'notyf/notyf.min.css';
 
 ReactDOM.render(
   <React.StrictMode>

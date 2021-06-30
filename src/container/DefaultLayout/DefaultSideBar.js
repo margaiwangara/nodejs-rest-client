@@ -4,102 +4,91 @@ import { useDispatch, useSelector } from 'react-redux';
 import { profileOverlay } from '@/utils/styling';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { logoutUser } from '@/store/actions/auth';
-import { BASE_URL } from '@/utils/env';
-import Identicon from 'react-identicons';
+import { loadProfileImage } from '@/utils/loadProfileImage';
 
 function DefaultSideBar({ sidebarOpen }) {
   const history = useHistory();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
 
-  const signOut = (e) => {
+  const signOut = () => {
     // e.preventDefault();
-    console.log('Signed Out');
+    //
     logoutUser(dispatch).then(() => history.push('/login'));
   };
 
-  const profileImage =
-    user.profileImage === 'no-image.jpg' ||
-    user.profileImage.toLowerCase().startsWith('http') ? (
-      <Identicon string={user.email} size={80} />
-    ) : (
-      <img
-        src={`${BASE_URL}/uploads/${user.profileImage}`}
-        alt="potrait"
-        className="w-100 h-100 rounded-circle"
-        style={{ objectFit: 'cover' }}
-      />
-    );
-
   return (
-    <div
-      className="sidebar bg-light"
-      style={{ width: sidebarOpen ? '300px' : 0 }}
-    >
-      <div className="sidebar-top p-3 d-flex flex-column align-items-center justify-content-center border-bottom border-grey">
-        <figure
-          className="m-0 mt-3"
-          style={{ height: '80px', width: '80px', position: 'relative' }}
-        >
-          <Link
-            to="/edit-profile-picture"
-            style={profileOverlay}
-            className="rounded-circle bg-primary"
-          >
-            <FontAwesomeIcon
-              icon="pencil-alt"
-              color="#ffffff"
-              style={{ fontSize: '15px' }}
-            />
-          </Link>
-          {profileImage}
-        </figure>
-        <h5 className="text-center mt-4 mb-2 text-dark">
-          {user.name} {user.surname}
-        </h5>
-        <p className="mb-3 text-secondary">{user.email}</p>
-        <button className="btn btn-danger btn-block mb-2" onClick={signOut}>
-          Logout
-        </button>
-      </div>
-      <div className="sidebar-bottom">
-        <ul className="list-unstyled sidebar-ul d-flex flex-column py-3 px-4">
-          <li className="sidbar-li">
+    <section className="default-inner__start">
+      <article className="default-inner__start__user shadow">
+        <figure className="user__avatar">{loadProfileImage(user, 40)}</figure>
+        <section className="default-inner__start__user__content">
+          <h5 className="user__title">
+            {user?.name} {user?.surname}
+          </h5>
+          <h6 className="user__subtitle">{user?.email}</h6>
+        </section>
+      </article>
+      <aside className="default-inner__start__sidenav shadow">
+        <ul className="sidenav-list">
+          <li className="sidenav-list__item">
             <NavLink
               exact
-              className="sidebar-a"
-              activeClassName="sidebar-active"
               to="/"
+              activeClassName="active"
+              className="sidenav-list__link"
             >
-              <FontAwesomeIcon icon="tachometer-alt" className="mr-3" />
-              Dashboard
+              <span>
+                <FontAwesomeIcon icon="columns" />
+              </span>
+              <span>Dashboard</span>
             </NavLink>
           </li>
-          <li className="sidebar-li">
+          <li className="sidenav-list__item">
             <NavLink
               exact
-              className="sidebar-a"
-              activeClassName="sidebar-active"
               to="/edit-profile"
+              activeClassName="active"
+              className="sidenav-list__link"
             >
-              <FontAwesomeIcon icon="user-edit" className="mr-3" />
-              Edit Profile
+              <span>
+                <FontAwesomeIcon icon="user-edit" />
+              </span>
+              <span>Edit Profile</span>
             </NavLink>
           </li>
-          <li className="sidebar-li">
+          <li className="sidenav-list__item">
             <NavLink
-              exact
-              className="sidebar-a"
-              activeClassName="sidebar-active"
               to="/change-password"
+              className="sidenav-list__link"
+              exact
+              activeClassName="active"
             >
-              <FontAwesomeIcon icon="key" className="mr-3" />
-              Change Password
+              <span>
+                <FontAwesomeIcon icon="unlock-alt" />
+              </span>
+              <span>Change Password</span>
             </NavLink>
+          </li>
+          <li className="sidenav-list__item">
+            <a
+              href="#dashboard"
+              className="sidenav-list__link"
+              style={{ borderBottomColor: 'transparent' }}
+              onClick={(e) => {
+                e.preventDefault();
+
+                signOut();
+              }}
+            >
+              <span>
+                <FontAwesomeIcon icon="sign-out-alt" />
+              </span>
+              <span>Log Out</span>
+            </a>
           </li>
         </ul>
-      </div>
-    </div>
+      </aside>
+    </section>
   );
 }
 

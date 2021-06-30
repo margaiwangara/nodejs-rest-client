@@ -15,11 +15,16 @@ import {
   faArrowAltCircleRight,
   faTachometerAlt,
   faBars,
+  faTrashAlt,
+  faColumns,
+  faUnlockAlt,
+  faSignOutAlt,
+  faLink,
 } from '@fortawesome/free-solid-svg-icons';
 import Loading from '@/utils/Loading';
 import SimpleBar from 'simplebar-react';
 import { ToastProvider } from 'react-toast-notifications';
-
+import { createGlobalStyle } from 'styled-components';
 // font-awesome library
 library.add(
   fab,
@@ -33,6 +38,11 @@ library.add(
   faArrowAltCircleRight,
   faTachometerAlt,
   faBars,
+  faTrashAlt,
+  faColumns,
+  faUnlockAlt,
+  faSignOutAlt,
+  faLink,
 );
 
 const store = configureStore();
@@ -42,6 +52,7 @@ const Main = React.lazy(() => import('@/container/Main/Main'));
 function App() {
   return (
     <Router>
+      <GlobalStyles />
       <div id="app" style={appStyling}>
         <React.Suspense fallback={Loading()}>
           <Provider store={store}>
@@ -65,5 +76,33 @@ const appStyling = {
   height: '100vh',
   oveflow: 'hidden',
 };
+
+const GlobalStyles = createGlobalStyle`
+  :root {
+    --custom-gray: #e9ebf1;
+    --white: #ffffff;
+  }
+
+  /* Works on Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bs-green) transparent;
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--bs-green);
+  border-radius: 20px;
+  border: 5px solid var(----bs-gray);
+}
+`;
 
 export default App;

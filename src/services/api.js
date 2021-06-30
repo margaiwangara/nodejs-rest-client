@@ -8,9 +8,19 @@ export const setTokenHeader = (token) => {
 
 function apiRequest(method, path, payload) {
   return new Promise((resolve, reject) => {
-    return axios[method.toLowerCase()](`${BASE_URL}${path}`, payload)
+    return axios
+      .request({
+        method,
+        url: path,
+        baseURL: BASE_URL,
+        data: payload,
+        withCredentials: true,
+      })
       .then((res) => resolve(res.data))
-      .catch((error) => reject(error.response.data.error));
+      .catch((error) => {
+        //
+        reject(error?.response?.data?.error);
+      });
   });
 }
 

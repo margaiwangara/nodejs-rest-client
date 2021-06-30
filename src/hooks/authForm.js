@@ -37,11 +37,9 @@ function useAuthForm(page) {
     authUser(dispatch, page, value, history, setLoading)
       .then(() => {
         setLoading(false);
-        console.log('Login Success');
       })
       .catch(() => {
         setLoading(false);
-        console.log('Login Failed');
       });
   };
 
@@ -62,7 +60,6 @@ function useAuthForm(page) {
           })
           .catch((error) => {
             setLoading(false);
-            console.log('Login With Google Failed. User data not acquired');
           });
       })
       .catch((error) => dispatch(addError(error)));
@@ -75,7 +72,6 @@ function useAuthForm(page) {
       appearance: 'error',
       autoDismiss: true,
     });
-    console.log('failure', response);
   };
 
   const responseFacebook = (response) => {
@@ -98,7 +94,6 @@ function useAuthForm(page) {
           })
           .catch((error) => {
             setLoading(false);
-            console.log('User data not acquired');
           });
       })
       .catch((error) => {
@@ -108,7 +103,6 @@ function useAuthForm(page) {
           appearance: 'error',
           autoDismiss: true,
         });
-        console.log('Facebook Login Error', error);
       });
   };
 
