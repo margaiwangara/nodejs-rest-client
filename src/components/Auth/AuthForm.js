@@ -24,7 +24,6 @@ function AuthForm({ page, btnText, heading }) {
     handleSubmit: onSubmit,
     handleForgotPassword,
     googleLoginSuccess,
-    googleLoginFailure,
     responseFacebook,
     loading,
   } = useAuthForm(page);
@@ -41,7 +40,7 @@ function AuthForm({ page, btnText, heading }) {
     <div className="card" style={{ position: 'relative' }}>
       {loading && <FullLoading />}
       <div className="card-body">
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={() => handleSubmit(onSubmit)}>
           <h3 className="text-center pb-2 border-bottom mb-3">{heading}</h3>
           <ErrorDisplay error={error} />
           {page === 'register' ? (
@@ -73,7 +72,7 @@ function AuthForm({ page, btnText, heading }) {
               ref={register({ required: true })}
             />
             {errors.email && (
-              <span className="invalid-feedback">Name is required</span>
+              <span className="invalid-feedback">Email is required</span>
             )}
           </div>
 
@@ -162,6 +161,7 @@ function AuthForm({ page, btnText, heading }) {
                 ></span>
               </div>
               <GoogleLogin
+                disabled={true}
                 clientId={GOOGLE_CLIENT_ID}
                 render={(props) => (
                   <SocialButton
@@ -179,6 +179,7 @@ function AuthForm({ page, btnText, heading }) {
               />
 
               <FacebookLogin
+                disabled={true}
                 appId={FACEBOOK_CLIENT_ID}
                 callback={responseFacebook}
                 render={(props) => (

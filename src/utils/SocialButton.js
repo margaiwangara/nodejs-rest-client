@@ -9,7 +9,12 @@ function SocialButton({ renderProps, btnProps }) {
         renderProps.disabled ? renderProps.disabled : renderProps.isDisabled
       }
       className={`d-flex align-items-center ${btnProps.btnClass} justify-content-center btn btn-block my-3 font-weight-bold`}
-      style={{ paddingTop: '13px', paddingBottom: '13px' }}
+      style={{
+        paddingTop: '13px',
+        paddingBottom: '13px',
+        cursor: 'not-allowed',
+        opacity: 0.75,
+      }}
     >
       <img
         src={btnProps.icon}

@@ -56,50 +56,62 @@ function authUser(dispatch, page, formValue, history, setLoading) {
           // check if email if confirmed
 
           setAuthorizationToken(token);
-          getUserDetails().then((userResponse) => {
-            const { isEmailConfirmed, twoFactorEnable } = userResponse;
-            //
-            //
-            if (!isEmailConfirmed) {
-              const emailConfirmError = {
-                message:
-                  'Please confirm your email address to access your account',
-              };
 
-              dispatch(addError(emailConfirmError));
-              return;
-            }
+          getUserDetails()
+            .then((userResponse) => {
+              if (!userResponse) {
+                dispatch(
+                  addError({
+                    message: 'Invalid Email or Password',
+                  }),
+                );
+                return;
+              }
 
-            // if 2fa is enabled send 2fa code else set token and redirect to home
-            if (twoFactorEnable) {
-              setLoading(true);
-              send2faCode()
-                .then(({ code, expiration }) => {
-                  //
+              const { isEmailConfirmed, twoFactorEnable } = userResponse;
+              //
+              //
+              if (!isEmailConfirmed) {
+                const emailConfirmError = {
+                  message:
+                    'Please confirm your email address to access your account',
+                };
 
-                  dispatch(set2faCode(code, expiration));
-                  setLoading(false);
-                  // set jwt token in localStorage
-                  window.localStorage.setItem('jwt', token);
-                  history.push('/two-factor');
-                })
-                .catch((error) => {
-                  //
-                  setLoading(false);
-                  history.push('/login');
-                });
-            } else {
-              // set jwt
-              window.localStorage.setItem('jwt', token);
-              // dispatch user details
-              const { ...userDetails } = userResponse;
-              dispatch(setCurrentUser(userDetails));
+                dispatch(addError(emailConfirmError));
+                return;
+              }
 
-              // clear local storage
-              window.localStorage.removeItem(RETURN_URL);
-              history.replace(returnUrl || '/');
-            }
-          });
+              // if 2fa is enabled send 2fa code else set token and redirect to home
+              if (twoFactorEnable) {
+                setLoading(true);
+                send2faCode()
+                  .then(({ code, expiration }) => {
+                    //
+
+                    dispatch(set2faCode(code, expiration));
+                    setLoading(false);
+                    // set jwt token in localStorage
+                    window.localStorage.setItem('jwt', token);
+                    history.push('/two-factor');
+                  })
+                  .catch((error) => {
+                    //
+                    setLoading(false);
+                    history.push('/login');
+                  });
+              } else {
+                // set jwt
+                window.localStorage.setItem('jwt', token);
+                // dispatch user details
+                const { ...userDetails } = userResponse;
+                dispatch(setCurrentUser(userDetails));
+
+                // clear local storage
+                window.localStorage.removeItem(RETURN_URL);
+                history.replace(returnUrl || '/');
+              }
+            })
+            .catch((error) => dispatch(addError(error)));
         } else if (page === 'register') {
           window.localStorage.removeItem(RETURN_URL);
           history.replace(returnUrl || '/');
