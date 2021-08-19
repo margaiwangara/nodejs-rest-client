@@ -40,7 +40,7 @@ function AuthForm({ page, btnText, heading }) {
     <div className="card" style={{ position: 'relative' }}>
       {loading && <FullLoading />}
       <div className="card-body">
-        <form onSubmit={() => handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <h3 className="text-center pb-2 border-bottom mb-3">{heading}</h3>
           <ErrorDisplay error={error} />
           {page === 'register' ? (
