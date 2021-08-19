@@ -6,7 +6,7 @@ function TitleComponent({ title }) {
 
   return (
     <Helmet>
-      <title>{`Drift | ${title ? title : defaultTitle}`}</title>
+      <title>{`Mtandao | ${title ? title : defaultTitle}`}</title>
     </Helmet>
   );
 }

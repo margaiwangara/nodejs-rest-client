@@ -167,14 +167,14 @@ function AuthForm({ page, btnText, heading }) {
                   <SocialButton
                     renderProps={props}
                     btnProps={{
-                      btnClass: 'btn-outline-secondary',
+                      btnClass: 'google-btn btn-outline-secondary',
                       icon: googleIcon,
                       btnText: 'Login With Google',
                     }}
                   />
                 )}
                 onSuccess={googleLoginSuccess}
-                onFailure={googleLoginFailure}
+                onFailure={() => console.log('Google Login Failed')}
                 cookiePolicy={'single_host_origin'}
               />
 

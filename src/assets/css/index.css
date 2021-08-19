@@ -67,6 +67,12 @@
   color: #ffffff;
 }
 
+.facebook-btn,
+.google-btn {
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
 .facebook-btn:hover {
   opacity: 0.75;
 }
