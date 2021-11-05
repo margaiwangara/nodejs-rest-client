@@ -95,9 +95,7 @@ function EditProfile() {
           className="p-2 w-100"
         >
           {isSuccess && (
-            <div class="alert alert-success">
-              Profile updated successfully
-            </div
+            <div class="alert alert-success">Profile updated successfully</div>
           )}
           <ErrorDisplay error={error} />
           <fieldset disabled={loading}>
