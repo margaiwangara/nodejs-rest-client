@@ -79,14 +79,14 @@ function Main() {
       />
       <PublicRoute
         exact
-        path="/confirmemail"
+        path="/confirm-email"
         name="Confirm Email"
         component={EmailConfirmation}
       />
       <PublicRoute exact path="/login" name="Login" component={Login} />
       <PublicRoute
         exact
-        path="/resetpassword"
+        path="/reset-password"
         name="Reset Password"
         component={ResetPassword}
       />

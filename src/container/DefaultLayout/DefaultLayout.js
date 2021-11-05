@@ -140,9 +140,12 @@ function DefaultLayout() {
               </li>
               <li className="nav__start__list__item">
                 <a
-                  href="#"
+                  href="#signout"
                   className="nav__start__list__link"
-                  onClick={(e) => signOut()}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    signOut();
+                  }}
                 >
                   <span>
                     <FontAwesomeIcon icon="sign-out-alt" />
@@ -195,7 +198,7 @@ function DefaultLayout() {
               </li>
               <li className="nav__end__menu__item">
                 <a
-                  href="#"
+                  href="#toggle"
                   className="nav__end__menu__link"
                   onClick={(e) => {
                     e.preventDefault();
