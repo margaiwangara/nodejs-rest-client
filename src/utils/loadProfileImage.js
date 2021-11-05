@@ -3,7 +3,13 @@ import Identicon from 'react-identicons';
 import { BASE_URL } from '@/utils/env';
 
 export const loadProfileImage = (user, size = 80) => {
-  const profileImage =
+  let profileImage = <Identicon string={user?.email} size={size} />;
+
+  if (!user || !user?.profileImage) {
+    return profileImage;
+  }
+
+  profileImage =
     user?.profileImage === 'no-image.jpg' ||
     user?.profileImage?.toLowerCase().startsWith('http') ? (
       <Identicon string={user?.email} size={size} />

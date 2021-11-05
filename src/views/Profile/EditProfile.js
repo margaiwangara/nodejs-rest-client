@@ -13,6 +13,7 @@ function EditProfile() {
   const { error } = useSelector((state) => state.error);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState([]);
+  const [isSuccess, setIsSuccess] = useState(false);
   const { toast } = useToast();
   const dispatch = useDispatch();
 
@@ -53,12 +54,12 @@ function EditProfile() {
       );
       dispatch(removeError());
       setLoading(false);
-
-      return toast?.success('Profile updated');
+      setIsSuccess(true);
+      setTimeout(() => setIsSuccess(false), 2000);
     } catch (error) {
       setLoading(false);
+      setIsSuccess(false);
       dispatch(addError(error));
-      return toast?.error('Profile update failed');
     }
   };
 
@@ -78,7 +79,8 @@ function EditProfile() {
       // return toast?.success('Profile image updated');
       return profileImage;
     } catch (error) {
-      return toast?.error('Profile image not updated');
+      // return toast?.error('Profile image not updated');
+      return user?.profileImage;
     }
   };
 
@@ -92,6 +94,11 @@ function EditProfile() {
           onSubmit={handleSubmit}
           className="p-2 w-100"
         >
+          {isSuccess && (
+            <div class="alert alert-success">
+              Profile updated successfully
+            </div
+          )}
           <ErrorDisplay error={error} />
           <fieldset disabled={loading}>
             <div className="row">
